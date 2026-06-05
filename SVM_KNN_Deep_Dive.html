@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVM & KNN — Complete Deep Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08101a;--surface:#0d1b2a;--card:#122033;--card2:#172840;
+  --accent:#00c8ff;--accent2:#ff6b35;--green:#39d353;--purple:#c084fc;--gold:#fbbf24;--coral:#f87171;--teal:#2dd4bf;
+  --text:#e8f4f8;--muted:#7a9bb5;--dim:#3a5570;--border:#1e3348;
+  --glow:rgba(0,200,255,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,16,26,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.brand{padding:10px 20px 0;font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:var(--accent);display:flex;align-items:center;gap:8px;}
+.brand em{color:var(--muted);font-size:11px;font-weight:400;font-family:'Outfit',sans-serif;font-style:normal;}
+.tabs{display:flex;overflow-x:auto;padding:5px 12px;gap:2px;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:6px 13px;border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;border:1px solid transparent;white-space:nowrap;letter-spacing:.2px;}
+.tab:hover{color:var(--text);background:var(--card);}
+.tab.on{color:var(--accent);background:var(--glow);border-color:rgba(0,200,255,.25);}
+.wrap{margin-top:82px;height:calc(100vh - 82px);overflow:hidden;}
+.page{display:none;height:100%;overflow-y:auto;padding:28px 20px 70px;}
+.page.on{display:block;}
+.inner{max-width:860px;margin:0 auto;}
+h1{font-family:'Playfair Display',serif;font-size:34px;font-weight:800;line-height:1.15;margin-bottom:6px;}
+h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--accent);margin:32px 0 12px;}
+h3{font-size:15px;font-weight:600;color:var(--teal);margin:20px 0 8px;}
+p,li{font-size:14px;line-height:1.8;margin-bottom:8px;}
+.sub{font-size:15px;color:var(--muted);margin-bottom:26px;line-height:1.65;}
+.c{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin:16px 0;}
+.c:hover{border-color:rgba(0,200,255,.18);}
+.c.hl{border-left:4px solid var(--accent);}
+.c.warn{border-left:4px solid var(--gold);}
+.c.ok{border-left:4px solid var(--green);}
+.c.red{border-left:4px solid var(--coral);}
+.c.pu{border-left:4px solid var(--purple);}
+.c.te{border-left:4px solid var(--teal);}
+.c.or{border-left:4px solid var(--accent2);}
+.tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-bottom:10px;}
+.t-bl{background:rgba(0,200,255,.1);color:var(--accent);}
+.t-go{background:rgba(251,191,36,.1);color:var(--gold);}
+.t-re{background:rgba(248,113,113,.1);color:var(--coral);}
+.t-gr{background:rgba(57,211,83,.1);color:var(--green);}
+.t-pu{background:rgba(192,132,252,.1);color:var(--purple);}
+.t-or{background:rgba(255,107,53,.1);color:var(--accent2);}
+.t-te{background:rgba(45,212,191,.1);color:var(--teal);}
+.code{background:#050e18;border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:12px 0;overflow-x:auto;position:relative;}
+.code code{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75;color:var(--text);white-space:pre;}
+.lang{position:absolute;top:7px;right:12px;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--dim);text-transform:uppercase;}
+.kw{color:#c792ea;}.fn{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#4a6070;}.num{color:#f78c6c;}.op{color:#89ddff;}
+.fm{background:#050e18;border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin:12px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);}
+.ex{background:linear-gradient(135deg,rgba(0,200,255,.04),rgba(45,212,191,.03));border:1px solid rgba(0,200,255,.15);border-radius:14px;padding:20px;margin:16px 0;}
+.ext{font-size:13.5px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+.tb{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;}
+.tb th{background:var(--card2);color:var(--accent);padding:9px 12px;text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.4px;border-bottom:2px solid var(--border);}
+.tb td{padding:9px 12px;border-bottom:1px solid var(--border);}
+.tb tr:hover td{background:rgba(0,200,255,.03);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+.gc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.gc.good{border-top:3px solid var(--green);}
+.gc.bad{border-top:3px solid var(--coral);}
+.gc h4{font-size:13px;font-weight:700;margin-bottom:8px;}
+.gc.good h4{color:var(--green);}
+.gc.bad h4{color:var(--coral);}
+.gc ul{padding-left:16px;}
+.gc li{font-size:12.5px;margin-bottom:5px;color:var(--muted);}
+.steps{counter-reset:s;list-style:none;padding:0;}
+.steps li{counter-increment:s;padding:12px 12px 12px 52px;position:relative;margin-bottom:6px;border-radius:10px;background:var(--card);border:1px solid var(--border);}
+.steps li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;background:var(--glow);border:1px solid rgba(0,200,255,.22);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--accent);}
+.flow{display:flex;align-items:center;gap:6px;margin:16px 0;flex-wrap:wrap;}
+.fb{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;text-align:center;flex-shrink:0;}
+.fa{color:var(--accent);font-size:18px;}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;}
+.badge{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;flex:1;min-width:100px;text-align:center;}
+.badge .v{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;color:var(--accent);}
+.badge .l{font-size:10.5px;color:var(--muted);margin-top:2px;}
+.qz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin:16px 0;}
+.qz .qt{font-weight:600;font-size:14px;margin-bottom:12px;}
+.qo{display:block;padding:9px 13px;margin:4px 0;border-radius:8px;border:1px solid var(--border);background:var(--card2);cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;}
+.qo:hover{border-color:var(--accent);color:var(--text);}
+.qo.ok{border-color:var(--green);background:rgba(57,211,83,.07);color:var(--green);}
+.qo.no{border-color:var(--coral);background:rgba(248,113,113,.07);color:var(--coral);}
+.qf{display:none;margin-top:10px;padding:10px 13px;border-radius:8px;font-size:12.5px;line-height:1.65;}
+.qf.show{display:block;}
+.qf.r{background:rgba(57,211,83,.07);color:var(--green);}
+.qf.w{background:rgba(248,113,113,.07);color:var(--coral);}
+.vis-box{background:var(--card2);border:1px solid var(--dim);border-radius:12px;padding:20px;margin:16px 0;text-align:center;}
+.pbar{position:fixed;bottom:0;left:0;height:3px;background:var(--accent);transition:width .15s;z-index:100;}
+.hi{background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.18);border-radius:8px;padding:3px 7px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--accent);}
+.mu{color:var(--muted);}
+@media(max-width:700px){h1{font-size:24px;}h2{font-size:19px;}.g2,.g3{grid-template-columns:1fr;}.page{padding:20px 14px 60px;}}
+</style>
+</head>
+<body>
+<nav class="nav">
+<div class="brand">🤖 SVM &amp; KNN — Complete Deep Dive <em>Beginner Friendly · Day 8</em></div>
+<div class="tabs" id="tabNav"></div>
+</nav>
+<div class="wrap">
+
+<!-- PAGE 0: OVERVIEW -->
+<div class="page" id="p0"><div class="inner">
+<h1>SVM &amp; KNN</h1>
+<p class="sub">Two powerful classification algorithms — completely different approaches, both incredibly useful. By the end of this session you'll know when to use each and how to implement them from scratch in Python.</p>
+
+<h2>Why Two Algorithms in One Day?</h2>
+<p>SVM and KNN represent two fundamentally different philosophies of machine learning:</p>
+<div class="g2">
+<div class="c hl">
+<span class="tag t-bl">SVM — The Boundary Finder</span>
+<p style="font-size:13px;margin:0">Draws the <strong>best possible line</strong> (or plane) to separate classes. Thinks globally — considers the entire dataset to find the optimal boundary.</p>
+</div>
+<div class="c or">
+<span class="tag t-or">KNN — The Neighbor Voter</span>
+<p style="font-size:13px;margin:0">Classifies by <strong>voting with neighbors</strong>. Thinks locally — only looks at nearby points to make a decision.</p>
+</div>
+</div>
+
+<h2>Day 8 — Session Agenda</h2>
+<table class="tb">
+<tr><th>Topic</th><th>Key Concept</th><th>Hands-On</th></tr>
+<tr><td><strong>SVM Introduction</strong></td><td>What is a hyperplane? What are support vectors?</td><td>Visual intuition</td></tr>
+<tr><td><strong>Margin &amp; Support Vectors</strong></td><td>Why the maximum margin matters</td><td>Diagrams + examples</td></tr>
+<tr><td><strong>Kernel Trick</strong></td><td>Handling non-linear data</td><td>RBF, Polynomial, Linear</td></tr>
+<tr><td><strong>SVM Practical</strong></td><td>Breast Cancer Dataset + PCA visualization</td><td>Full code walkthrough</td></tr>
+<tr><td><strong>KNN Introduction</strong></td><td>Majority voting with neighbors</td><td>Step-by-step visual</td></tr>
+<tr><td><strong>Distance Metrics</strong></td><td>Euclidean, Manhattan, Minkowski</td><td>Formula + intuition</td></tr>
+<tr><td><strong>Choosing K</strong></td><td>Bias-variance tradeoff for K</td><td>K vs Accuracy plot</td></tr>
+<tr><td><strong>KNN Practical</strong></td><td>Iris Dataset classification</td><td>Full code walkthrough</td></tr>
+</table>
+
+<div class="c hl"><span class="tag t-bl">Running Datasets</span>
+<div class="g2">
+<div><strong>🔬 SVM:</strong> Breast Cancer Wisconsin Dataset<br><span style="font-size:12.5px;color:var(--muted)">569 samples, 30 features, binary classification (Malignant vs Benign)</span></div>
+<div><strong>🌸 KNN:</strong> Iris Dataset<br><span style="font-size:12.5px;color:var(--muted)">150 samples, 4 features, 3 classes (Setosa, Versicolor, Virginica)</span></div>
+</div>
+</div>
+</div></div>
+
+<!-- PAGE 1: SVM INTRO -->
+<div class="page" id="p1"><div class="inner">
+<h1>Support Vector Machine (SVM)</h1>
+<p class="sub">SVM finds the best possible boundary between classes — not just any boundary, but the one that creates the maximum gap between the two sides.</p>
+
+<h2>The Core Idea</h2>
+<p>Imagine you have red apples and green apples on a table. SVM asks: <em>"What is the best line I can draw to separate them, leaving the maximum space on both sides?"</em></p>
+
+<div class="ex"><div class="ext">🍎 Simple Example — 2D Classification</div>
+<div class="vis-box" style="padding:30px">
+<svg width="320" height="200" style="max-width:100%">
+  <!-- Grid -->
+  <line x1="40" y1="10" x2="40" y2="190" stroke="#1e3348" stroke-width="1"/>
+  <line x1="40" y1="190" x2="310" y2="190" stroke="#1e3348" stroke-width="1"/>
+  <!-- Hyperplane -->
+  <line x1="160" y1="20" x2="195" y2="185" stroke="#00c8ff" stroke-width="2.5" stroke-dasharray="0"/>
+  <!-- Margins -->
+  <line x1="120" y1="20" x2="155" y2="185" stroke="#00c8ff" stroke-width="1" stroke-dasharray="5,3" opacity=".5"/>
+  <line x1="200" y1="20" x2="235" y2="185" stroke="#00c8ff" stroke-width="1" stroke-dasharray="5,3" opacity=".5"/>
+  <!-- Class A (red) -->
+  <circle cx="75" cy="60" r="7" fill="#f87171"/>
+  <circle cx="95" cy="100" r="7" fill="#f87171"/>
+  <circle cx="60" cy="140" r="7" fill="#f87171"/>
+  <circle cx="110" cy="80" r="7" fill="#f87171"/>
+  <circle cx="80" cy="155" r="7" fill="#f87171"/>
+  <!-- Class B (blue) -->
+  <circle cx="235" cy="55" r="7" fill="#82aaff"/>
+  <circle cx="255" cy="95" r="7" fill="#82aaff"/>
+  <circle cx="220" cy="130" r="7" fill="#82aaff"/>
+  <circle cx="270" cy="150" r="7" fill="#82aaff"/>
+  <circle cx="245" cy="170" r="7" fill="#82aaff"/>
+  <!-- Support Vectors (outlined) -->
+  <circle cx="110" cy="80" r="7" fill="#f87171" stroke="white" stroke-width="2"/>
+  <circle cx="220" cy="130" r="7" fill="#82aaff" stroke="white" stroke-width="2"/>
+  <!-- Labels -->
+  <text x="55" y="185" fill="#f87171" font-size="11" font-family="Outfit">Class A</text>
+  <text x="240" y="30" fill="#82aaff" font-size="11" font-family="Outfit">Class B</text>
+  <text x="155" y="12" fill="#00c8ff" font-size="10" font-family="Outfit">Hyperplane</text>
+  <text x="60" y="25" fill="#7a9bb5" font-size="9" font-family="Outfit">← Margin →</text>
+</svg>
+<p style="font-size:12.5px;color:var(--muted);margin:8px 0 0">White-outlined circles = Support Vectors (the closest points to the boundary)</p>
+</div>
+</div>
+
+<h2>Key Terminology</h2>
+<table class="tb">
+<tr><th>Term</th><th>What It Means</th><th>Simple Analogy</th></tr>
+<tr><td><strong>Hyperplane</strong></td><td>The decision boundary that separates classes</td><td>The line drawn on the table between red and green apples</td></tr>
+<tr><td><strong>Support Vectors</strong></td><td>The data points closest to the hyperplane — they define it</td><td>The apples sitting right at the edge of the dividing line</td></tr>
+<tr><td><strong>Margin</strong></td><td>The distance between the hyperplane and the support vectors</td><td>The empty space between the apples and the dividing line</td></tr>
+<tr><td><strong>Maximum Margin</strong></td><td>SVM's goal: make the margin as large as possible</td><td>Drawing the line so there's the most space on both sides</td></tr>
+</table>
+
+<div class="c warn"><span class="tag t-go">Why Maximum Margin?</span>
+<p>A larger margin means the model is more <strong>confident</strong> and <strong>generalizes better</strong> to new data. A tiny margin means the boundary is too close to training points and will likely make errors on new examples.</p>
+<p>Think of it like writing on a narrow street vs. a wide highway — the highway gives you much more room for error!</p>
+</div>
+
+<h2>SVM for Classification vs Regression</h2>
+<div class="g2">
+<div class="c hl"><span class="tag t-bl">Classification (SVC)</span>
+<ul style="padding-left:16px">
+<li>Assigns each point to a class</li>
+<li>Finds the optimal separating hyperplane</li>
+<li>Uses ε-insensitive loss</li>
+<li>Works well even in high dimensions</li>
+</ul>
+</div>
+<div class="c te"><span class="tag t-te">Regression (SVR)</span>
+<ul style="padding-left:16px">
+<li>Predicts continuous values</li>
+<li>Finds a function that fits within a margin ε</li>
+<li>Robust to outliers</li>
+<li>Can capture non-linear relationships via kernels</li>
+</ul>
+</div>
+</div>
+
+<div class="c ok"><span class="tag t-gr">When is SVM a Great Choice?</span>
+<ul style="padding-left:18px">
+<li>High-dimensional data (many features)</li>
+<li>Clear margin of separation between classes</li>
+<li>When you have a small-to-medium dataset</li>
+<li>When memory efficiency matters (only stores support vectors!)</li>
+<li>Text classification, image recognition, bioinformatics</li>
+</ul>
+</div>
+</div></div>
+
+<!-- PAGE 2: MARGIN & KERNELS -->
+<div class="page" id="p2"><div class="inner">
+<h1>Margin, Support Vectors &amp; Kernel Trick</h1>
+<p class="sub">Understanding WHY SVM maximizes the margin — and HOW it handles data that can't be separated by a straight line.</p>
+
+<h2>The Margin in Detail</h2>
+<div class="fm">Margin = 2 / ||w|| &nbsp;&nbsp; (where w is the weight vector of the hyperplane)</div>
+<p>SVM maximizes this margin — which means minimizing <strong>||w||²</strong>. This is a constrained optimization problem solved using Lagrange multipliers (don't worry — sklearn handles this for you!).</p>
+
+<div class="ex"><div class="ext">📐 Why Margin = 2/||w||</div>
+<p>If our hyperplane equation is <span class="hi">w·x + b = 0</span>, then:</p>
+<ul style="padding-left:18px;margin:8px 0">
+<li>Points on the <strong>positive</strong> side: w·x + b ≥ +1</li>
+<li>Points on the <strong>negative</strong> side: w·x + b ≤ −1</li>
+<li>The distance between these two planes is <strong>2/||w||</strong></li>
+<li>Support vectors are the points that satisfy w·x + b = ±1</li>
+</ul>
+</div>
+
+<h2>Soft Margin — Handling Noise</h2>
+<p>What if the data isn't perfectly separable? Real data has noise! SVM uses a <strong>parameter C</strong>:</p>
+<div class="badges">
+<div class="badge" style="border-color:var(--coral)"><div class="v">Small C</div><div class="l">Wider margin, more misclassifications allowed (underfitting risk)</div></div>
+<div class="badge" style="border-color:var(--gold)"><div class="v">C = 1</div><div class="l">Balanced default — good starting point</div></div>
+<div class="badge" style="border-color:var(--green)"><div class="v">Large C</div><div class="l">Narrower margin, fewer misclassifications (overfitting risk)</div></div>
+</div>
+
+<h2>The Kernel Trick — Handling Non-Linear Data</h2>
+<p>What if no straight line can separate the data? The kernel trick <strong>projects data into a higher dimension</strong> where it becomes linearly separable — without actually computing the transformation!</p>
+
+<div class="ex"><div class="ext">🎯 Intuition — The XOR Problem</div>
+<p>Points at (0,0),(1,1) are class A. Points at (0,1),(1,0) are class B. <strong>No straight line can separate them!</strong></p>
+<p>But if we add a new feature: <span class="hi">z = x·y</span>, then in 3D space the classes ARE separable with a plane.</p>
+<p>The kernel trick does this transformation <em>implicitly</em> using the kernel function — no need to compute new coordinates.</p>
+</div>
+
+<h2>Kernel Functions</h2>
+<table class="tb">
+<tr><th>Kernel</th><th>Formula</th><th>Use When</th><th>sklearn param</th></tr>
+<tr><td><strong>Linear</strong></td><td>K(x,y) = x·y</td><td>Data is linearly separable</td><td><span class="hi">kernel='linear'</span></td></tr>
+<tr><td><strong>Polynomial</strong></td><td>K(x,y) = (γx·y + r)^d</td><td>Polynomial relationships</td><td><span class="hi">kernel='poly'</span></td></tr>
+<tr><td><strong>RBF / Gaussian</strong></td><td>K(x,y) = exp(−γ||x−y||²)</td><td>Non-linear, complex boundaries</td><td><span class="hi">kernel='rbf'</span></td></tr>
+<tr><td><strong>Sigmoid</strong></td><td>K(x,y) = tanh(γx·y + r)</td><td>Similar to neural networks</td><td><span class="hi">kernel='sigmoid'</span></td></tr>
+</table>
+
+<div class="c warn"><span class="tag t-go">Which Kernel to Choose?</span>
+<p><strong>Start with RBF</strong> — it works well for most problems. Use <strong>linear</strong> when you have many features (like text). <strong>Polynomial</strong> is good for image classification. Always cross-validate!</p>
+</div>
+
+<div class="c pu"><span class="tag t-pu">🔑 Key Insight: Why SVM is Efficient with Kernels</span>
+<p>Even if the high-dimensional space has millions of dimensions, the kernel only computes dot products between pairs of points. You get the power of high-dimensional space without the computational cost. This is the <em>kernel trick</em>!</p>
+</div>
+</div></div>
+
+<!-- PAGE 3: SVM PRACTICAL -->
+<div class="page" id="p3"><div class="inner">
+<h1>SVM Practical: Breast Cancer Dataset</h1>
+<p class="sub">Complete walkthrough of the class notebook — building an SVM classifier and visualizing results with PCA.</p>
+
+<h2>The Dataset</h2>
+<div class="ex"><div class="ext">🔬 Breast Cancer Wisconsin Dataset</div>
+<table class="tb">
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Samples</td><td>569 patient records</td></tr>
+<tr><td>Features</td><td>30 numeric features (radius, texture, perimeter, area, smoothness, etc.)</td></tr>
+<tr><td>Target</td><td>0 = Malignant (cancerous), 1 = Benign (non-cancerous)</td></tr>
+<tr><td>Class Split</td><td>212 Malignant, 357 Benign</td></tr>
+<tr><td>Source</td><td>sklearn.datasets.load_breast_cancer()</td></tr>
+</table>
+<p style="margin-top:10px">Our goal: Train an SVM to classify tumors as malignant or benign based on cell measurements.</p>
+</div>
+
+<h2>Step 1: Import Libraries</h2>
+<div class="code"><span class="lang">Python</span><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> sklearn <span class="kw">import</span> datasets
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, confusion_matrix, classification_report
+<span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> PCA</code></div>
+
+<h2>Step 2–4: Load, Split &amp; Scale</h2>
+<div class="code"><span class="lang">Python</span><code><span class="cm"># Load the built-in dataset</span>
+data = datasets.load_breast_cancer()
+X = data.data   <span class="cm"># 569 × 30 feature matrix</span>
+y = data.target  <span class="cm"># 0=Malignant, 1=Benign</span>
+
+<span class="cm"># Split: 80% train, 20% test</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># CRITICAL: Feature scaling for SVM!</span>
+<span class="cm"># SVM uses distances — unscaled features will dominate</span>
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)  <span class="cm"># Fit on train ONLY</span>
+X_test = scaler.transform(X_test)        <span class="cm"># Transform test with same scaler</span></code></div>
+
+<div class="c warn"><span class="tag t-go">⚠️ Why Scaling is Critical for SVM</span>
+<p>SVM computes distances between points. If one feature has values in thousands (like area) and another has values 0–1 (like smoothness), the large-scale feature will dominate the distance calculation and the model will fail. <strong>Always scale before SVM!</strong></p>
+</div>
+
+<h2>Step 5–6: Train and Predict</h2>
+<div class="code"><span class="lang">Python</span><code><span class="cm"># Train SVM with linear kernel, C=1</span>
+svm_classifier = SVC(kernel=<span class="str">'linear'</span>, C=<span class="num">1</span>)
+svm_classifier.fit(X_train, y_train)
+
+<span class="cm"># Make predictions</span>
+y_pred = svm_classifier.predict(X_test)</code></div>
+
+<h2>Step 7: Evaluate</h2>
+<div class="code"><span class="lang">Python</span><code>accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+classification_rep = classification_report(y_test, y_pred)
+
+<span class="fn">print</span>(<span class="str">f"Accuracy: {accuracy:.4f}"</span>)
+<span class="fn">print</span>(<span class="str">"Confusion Matrix:\n"</span>, conf_matrix)
+<span class="fn">print</span>(<span class="str">"Classification Report:\n"</span>, classification_rep)</code></div>
+
+<div class="ex"><div class="ext">📊 Expected Results</div>
+<table class="tb">
+<tr><th>Metric</th><th>Typical Value</th><th>What It Means</th></tr>
+<tr><td><strong>Accuracy</strong></td><td>~96–97%</td><td>97 out of 100 tumors correctly classified</td></tr>
+<tr><td><strong>Precision (Malignant)</strong></td><td>~95%</td><td>95% of "malignant" predictions are actually malignant</td></tr>
+<tr><td><strong>Recall (Malignant)</strong></td><td>~95%</td><td>95% of actual malignant cases are caught</td></tr>
+<tr><td><strong>F1-Score</strong></td><td>~95%</td><td>Balanced precision-recall measure</td></tr>
+</table>
+<p style="margin-top:8px">In medical diagnosis, <strong>Recall</strong> (catching all cancer cases) is more important than Precision!</p>
+</div>
+
+<h2>Step 8: Visualize with PCA</h2>
+<div class="code"><span class="lang">Python</span><code><span class="cm"># Reduce 30 features to 2D for visualization</span>
+pca = PCA(n_components=<span class="num">2</span>)
+X_train_pca = pca.fit_transform(X_train)
+
+<span class="cm"># Create decision boundary grid</span>
+h = .<span class="num">02</span>
+x_min, x_max = X_train_pca[:, <span class="num">0</span>].min() - <span class="num">1</span>, X_train_pca[:, <span class="num">0</span>].max() + <span class="num">1</span>
+y_min, y_max = X_train_pca[:, <span class="num">1</span>].min() - <span class="num">1</span>, X_train_pca[:, <span class="num">1</span>].max() + <span class="num">1</span>
+xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+<span class="cm"># IMPORTANT: Transform back to original space for prediction</span>
+Z = svm_classifier.predict(pca.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+Z = Z.reshape(xx.shape)
+
+plt.figure(figsize=(<span class="num">10</span>, <span class="num">6</span>))
+plt.contourf(xx, yy, Z, cmap=plt.cm.Paired, alpha=<span class="num">0.2</span>)
+plt.scatter(X_train_pca[:, <span class="num">0</span>], X_train_pca[:, <span class="num">1</span>],
+            c=y_train, cmap=plt.cm.Paired, s=<span class="num">50</span>)
+plt.xlabel(<span class="str">'First Principal Component'</span>)
+plt.ylabel(<span class="str">'Second Principal Component'</span>)
+plt.title(<span class="str">'SVM Decision Boundary (PCA Projection)'</span>)
+plt.show()</code></div>
+
+<div class="c hl"><span class="tag t-bl">Why PCA for Visualization?</span>
+<p>Our dataset has 30 dimensions — we can't visualize that! PCA reduces it to 2 dimensions while keeping the most important variance. The PCA plot shows an <em>approximation</em> of the decision boundary; the actual SVM operates in 30D space.</p>
+</div>
+</div></div>
+
+<!-- PAGE 4: KNN INTRO -->
+<div class="page" id="p4"><div class="inner">
+<h1>K-Nearest Neighbors (KNN)</h1>
+<p class="sub">The simplest classifier: "You are like your neighbors." KNN classifies by looking at what class the K nearest neighbors belong to.</p>
+
+<h2>The Core Idea</h2>
+<p>Imagine you move to a new city and want to predict what neighborhood you're in. You look at the K houses closest to yours and take a vote — if most of your neighbors are in "Downtown", you're probably in "Downtown" too.</p>
+
+<div class="ex"><div class="ext">🌸 KNN Classification Example — Iris Dataset</div>
+<div class="vis-box">
+<svg width="300" height="220" style="max-width:100%">
+  <!-- Grid lines -->
+  <line x1="40" y1="10" x2="40" y2="200" stroke="#1e3348" stroke-width="1"/>
+  <line x1="40" y1="200" x2="290" y2="200" stroke="#1e3348" stroke-width="1"/>
+  <!-- Known points - Class A (red) -->
+  <circle cx="80" cy="160" r="7" fill="#f87171"/>
+  <circle cx="100" cy="140" r="7" fill="#f87171"/>
+  <circle cx="70" cy="130" r="7" fill="#f87171"/>
+  <circle cx="90" cy="170" r="7" fill="#f87171"/>
+  <!-- Known points - Class B (blue) -->
+  <circle cx="200" cy="80" r="7" fill="#82aaff"/>
+  <circle cx="220" cy="60" r="7" fill="#82aaff"/>
+  <circle cx="240" cy="90" r="7" fill="#82aaff"/>
+  <circle cx="210" cy="100" r="7" fill="#82aaff"/>
+  <!-- Known points - Class C (green) -->
+  <circle cx="160" cy="150" r="7" fill="#39d353"/>
+  <circle cx="180" cy="130" r="7" fill="#39d353"/>
+  <circle cx="155" cy="120" r="7" fill="#39d353"/>
+  <!-- Unknown point -->
+  <circle cx="170" cy="100" r="9" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+  <circle cx="170" cy="100" r="3" fill="#fbbf24"/>
+  <!-- K=3 radius circle -->
+  <circle cx="170" cy="100" r="50" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,3" opacity=".5"/>
+  <!-- Lines to K=3 neighbors -->
+  <line x1="170" y1="100" x2="180" y2="130" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3,2" opacity=".7"/>
+  <line x1="170" y1="100" x2="155" y2="120" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3,2" opacity=".7"/>
+  <line x1="170" y1="100" x2="200" y2="80" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3,2" opacity=".7"/>
+  <!-- Labels -->
+  <text x="58" y="195" fill="#f87171" font-size="10" font-family="Outfit">Class A</text>
+  <text x="200" y="55" fill="#82aaff" font-size="10" font-family="Outfit">Class B</text>
+  <text x="135" y="115" fill="#39d353" font-size="10" font-family="Outfit">Class C</text>
+  <text x="175" y="90" fill="#fbbf24" font-size="10" font-family="Outfit">?</text>
+  <text x="168" y="57" fill="#fbbf24" font-size="9" font-family="Outfit">K=3</text>
+</svg>
+<p style="font-size:12.5px;color:var(--muted);margin:8px 0 0">? = Unknown point. K=3 nearest neighbors: 2 green (Class C), 1 blue (Class B). <strong>Vote: Class C wins!</strong></p>
+</div>
+</div>
+
+<h2>KNN Algorithm — Step by Step</h2>
+<ol class="steps">
+<li><strong>Choose K:</strong> Decide how many neighbors to consider (e.g., K=3 or K=5)</li>
+<li><strong>Calculate Distances:</strong> Measure distance from the new point to ALL training points</li>
+<li><strong>Find K Nearest:</strong> Select the K training points with the smallest distances</li>
+<li><strong>Vote (Classification):</strong> The class that appears most among K neighbors wins</li>
+<li><strong>Average (Regression):</strong> Predict the mean of the K neighbors' values</li>
+</ol>
+
+<h2>KNN is a Lazy Learner</h2>
+<div class="c warn"><span class="tag t-go">What Does "Lazy" Mean?</span>
+<p>Unlike SVM which learns a model (the hyperplane) during training, KNN stores the entire training dataset and only does computation at prediction time. This makes training instant but prediction slow for large datasets. This is called <strong>instance-based learning</strong> or <strong>lazy learning</strong>.</p>
+</div>
+
+<div class="g2">
+<div class="gc good"><h4>✅ KNN Advantages</h4><ul>
+<li>No training time — just store data</li>
+<li>Simple to understand and implement</li>
+<li>Naturally handles multi-class</li>
+<li>No assumptions about data distribution</li>
+<li>Adapts to new training data easily</li>
+</ul></div>
+<div class="gc bad"><h4>❌ KNN Disadvantages</h4><ul>
+<li>Slow at prediction time (big datasets)</li>
+<li>Sensitive to irrelevant features</li>
+<li>Requires feature scaling</li>
+<li>High memory (stores all training data)</li>
+<li>Suffers from curse of dimensionality</li>
+</ul></div>
+</div>
+</div></div>
+
+<!-- PAGE 5: DISTANCE METRICS & K VALUE -->
+<div class="page" id="p5"><div class="inner">
+<h1>Distance Metrics &amp; Choosing K</h1>
+<p class="sub">KNN is all about measuring how "similar" points are. The choice of distance metric and K value dramatically affects results.</p>
+
+<h2>Distance Metrics</h2>
+<p>KNN needs to measure how far apart two points are. Different metrics suit different situations:</p>
+
+<div class="c hl"><span class="tag t-bl">Euclidean Distance (Most Common)</span>
+<div class="fm">d(A,B) = √[(x₂−x₁)² + (y₂−y₁)² + ... ]</div>
+<p><strong>Straight-line distance.</strong> The ruler distance in physical space. Best for continuous data where features are measured in the same units.</p>
+<div class="ex" style="margin-top:10px"><div class="ext" style="font-size:12px">Example</div>
+<p style="font-size:13px">Point A = (2, 3), Point B = (5, 7)<br>Distance = √[(5−2)² + (7−3)²] = √[9+16] = √25 = <strong>5</strong></p>
+</div>
+</div>
+
+<div class="c or"><span class="tag t-or">Manhattan Distance (City Block)</span>
+<div class="fm">d(A,B) = |x₂−x₁| + |y₂−y₁| + ...</div>
+<p><strong>Sum of absolute differences.</strong> Like navigating city blocks — you can only move horizontally or vertically. Better for high-dimensional data, less sensitive to outliers.</p>
+<div class="ex" style="margin-top:10px"><div class="ext" style="font-size:12px">Example</div>
+<p style="font-size:13px">Point A = (2, 3), Point B = (5, 7)<br>Distance = |5−2| + |7−3| = 3 + 4 = <strong>7</strong></p>
+</div>
+</div>
+
+<div class="c pu"><span class="tag t-pu">Minkowski Distance (General Form)</span>
+<div class="fm">d(A,B) = (|x₂−x₁|^p + |y₂−y₁|^p + ...)^(1/p)</div>
+<p>When <strong>p=1</strong>: Manhattan Distance. When <strong>p=2</strong>: Euclidean Distance. When <strong>p→∞</strong>: Chebyshev Distance (max of differences). The sklearn default is p=2 (Euclidean).</p>
+</div>
+
+<div class="c te"><span class="tag t-te">Quick Comparison</span>
+<table class="tb">
+<tr><th>Metric</th><th>Best For</th><th>Sensitive To Outliers?</th></tr>
+<tr><td>Euclidean</td><td>Continuous features, low dimensions</td><td>Yes (squares differences)</td></tr>
+<tr><td>Manhattan</td><td>High dimensions, sparse data</td><td>Less (absolute differences)</td></tr>
+<tr><td>Minkowski</td><td>Flexible — tune p parameter</td><td>Depends on p</td></tr>
+<tr><td>Hamming</td><td>Categorical data, text</td><td>No</td></tr>
+</table>
+</div>
+
+<h2>Choosing the Value of K</h2>
+<p>This is the most important hyperparameter in KNN. It controls the <strong>bias-variance tradeoff</strong>:</p>
+<div class="badges">
+<div class="badge" style="border-color:var(--coral)"><div class="v">K=1</div><div class="l">Zero bias, max variance. Overfitting — too sensitive to noise</div></div>
+<div class="badge" style="border-color:var(--gold)"><div class="v">K=5</div><div class="l">Good balance. Common starting point</div></div>
+<div class="badge" style="border-color:var(--green)"><div class="v">K=large</div><div class="l">High bias, low variance. Underfitting — too smooth</div></div>
+</div>
+
+<div class="c warn"><span class="tag t-go">Rules of Thumb for K</span>
+<ul style="padding-left:18px">
+<li><strong>K = √n</strong> is a common heuristic (n = number of training samples)</li>
+<li><strong>Use odd K</strong> for binary classification to avoid ties</li>
+<li><strong>Use cross-validation</strong> to find the optimal K</li>
+<li><strong>K should be small</strong> if the decision boundary is complex and irregular</li>
+<li>The class notebook shows plotting <strong>Accuracy vs K</strong> to find the best K</li>
+</ul>
+</div>
+
+<div class="ex"><div class="ext">📈 How the Class Notebook Finds Best K</div>
+<div class="code"><span class="lang">Python</span><code><span class="kw">def</span> <span class="fn">choose_k</span>(X_train, y_train, X_test, y_test, max_k=<span class="num">10</span>):
+    k_values = <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">1</span>, max_k+<span class="num">1</span>))
+    accuracy_values = []
+
+    <span class="kw">for</span> k <span class="kw">in</span> k_values:
+        knn = KNeighborsClassifier(n_neighbors=k)
+        knn.fit(X_train, y_train)
+        y_pred = knn.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        accuracy_values.append(accuracy)
+
+    <span class="cm"># Plot accuracy vs K</span>
+    plt.plot(k_values, accuracy_values, marker=<span class="str">'o'</span>)
+    plt.xlabel(<span class="str">'Number of Neighbors (K)'</span>)
+    plt.ylabel(<span class="str">'Accuracy'</span>)
+    plt.title(<span class="str">'Accuracy vs K'</span>)
+    plt.show()
+
+    <span class="cm"># Return K with highest accuracy</span>
+    best_k = k_values[accuracy_values.index(<span class="fn">max</span>(accuracy_values))]
+    <span class="kw">return</span> best_k</code></div>
+</div>
+</div></div>
+
+<!-- PAGE 6: KNN PRACTICAL -->
+<div class="page" id="p6"><div class="inner">
+<h1>KNN Practical: Iris Dataset</h1>
+<p class="sub">Complete walkthrough of the class notebook — finding the best K and classifying Iris flowers.</p>
+
+<h2>The Dataset</h2>
+<div class="ex"><div class="ext">🌸 Iris Dataset</div>
+<table class="tb">
+<tr><th>Property</th><th>Value</th></tr>
+<tr><td>Samples</td><td>150 flowers (50 per class)</td></tr>
+<tr><td>Features</td><td>Sepal Length, Sepal Width, Petal Length, Petal Width (all in cm)</td></tr>
+<tr><td>Target Classes</td><td>Setosa, Versicolor, Virginica</td></tr>
+<tr><td>Source</td><td>CSV file: <span class="hi">iris.csv</span></td></tr>
+</table>
+<p style="margin-top:10px">Goal: Given measurements of a flower, identify its species. Setosa is linearly separable from the others; Versicolor and Virginica overlap slightly.</p>
+</div>
+
+<h2>Step 1–3: Import, Load &amp; Preprocess</h2>
+<div class="code"><span class="lang">Python</span><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, classification_report
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+<span class="cm"># Load the dataset</span>
+data = pd.read_csv(<span class="str">'iris.csv'</span>)
+
+<span class="cm"># Split features and target</span>
+X = data.drop(<span class="str">'species'</span>, axis=<span class="num">1</span>)   <span class="cm"># 4 features</span>
+y = data[<span class="str">'species'</span>]                   <span class="cm"># Target class
+
+# Train-test split (70% train, 30% test)</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.3</span>, random_state=<span class="num">42</span>
+)</code></div>
+
+<div class="c hl"><span class="tag t-bl">Note: No Feature Scaling?</span>
+<p>The Iris dataset features are all in similar units (centimeters), so scaling isn't critical here. But for KNN in general, <strong>always scale your features</strong> — just like SVM, KNN uses distances and different scales will bias results.</p>
+</div>
+
+<h2>Step 4: Find the Best K</h2>
+<div class="code"><span class="lang">Python</span><code><span class="cm"># Use the choose_k function from the notebook</span>
+best_k = choose_k(X_train, y_train, X_test, y_test)
+<span class="fn">print</span>(<span class="str">f"Best k: {best_k}"</span>)
+<span class="cm"># Output: Best k: 1 (on this specific split)</span>
+<span class="cm"># Note: best K depends on the train/test split!</span></code></div>
+
+<h2>Step 5–7: Train, Predict &amp; Evaluate</h2>
+<div class="code"><span class="lang">Python</span><code><span class="cm"># Train KNN with best K</span>
+knn = KNeighborsClassifier(n_neighbors=best_k)
+knn.fit(X_train, y_train)
+
+<span class="cm"># Predict</span>
+y_pred = knn.predict(X_test)
+
+<span class="cm"># Evaluate</span>
+accuracy = accuracy_score(y_test, y_pred)
+<span class="fn">print</span>(<span class="str">f"Accuracy: {accuracy}"</span>)
+<span class="fn">print</span>(<span class="str">"Classification Report:"</span>)
+<span class="fn">print</span>(classification_report(y_test, y_pred))</code></div>
+
+<div class="ex"><div class="ext">📊 Expected Results</div>
+<table class="tb">
+<tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1-Score</th></tr>
+<tr><td>Setosa</td><td>1.00</td><td>1.00</td><td>1.00</td></tr>
+<tr><td>Versicolor</td><td>1.00</td><td>1.00</td><td>1.00</td></tr>
+<tr><td>Virginica</td><td>1.00</td><td>1.00</td><td>1.00</td></tr>
+<tr><td><strong>Overall Accuracy</strong></td><td colspan="3" style="color:var(--green)"><strong>1.0 (100%) — Perfect score!</strong></td></tr>
+</table>
+<p style="font-size:12.5px;color:var(--muted);margin-top:8px">100% accuracy is possible on this specific train/test split. With different random_state values, you may get 97–100%.</p>
+</div>
+
+<h2>Step 8: Visualize with Pairplot</h2>
+<div class="code"><span class="lang">Python</span><code><span class="cm"># Pairplot shows relationships between all feature pairs</span>
+sns.pairplot(data, hue=<span class="str">'species'</span>, markers=[<span class="str">'o'</span>, <span class="str">'s'</span>, <span class="str">'D'</span>])
+plt.suptitle(<span class="str">'Iris Dataset: Feature Pair Relationships'</span>, y=<span class="num">1.02</span>)
+plt.show()
+
+<span class="cm"># The pairplot shows:
+# - Setosa is clearly separated from the other two
+# - Versicolor and Virginica overlap slightly
+# - Petal dimensions are more separable than sepal dimensions</span></code></div>
+</div></div>
+
+<!-- PAGE 7: SVM vs KNN COMPARISON -->
+<div class="page" id="p7"><div class="inner">
+<h1>SVM vs KNN — Complete Comparison</h1>
+<p class="sub">Now that you understand both algorithms deeply, let's compare them head-to-head across every dimension.</p>
+
+<h2>Side-by-Side Comparison</h2>
+<table class="tb">
+<tr><th>Aspect</th><th>SVM</th><th>KNN</th></tr>
+<tr><td><strong>Core Idea</strong></td><td>Find optimal decision boundary (hyperplane)</td><td>Classify by majority vote of K neighbors</td></tr>
+<tr><td><strong>Training</strong></td><td>Slow (solves optimization problem)</td><td>Instant (just stores data)</td></tr>
+<tr><td><strong>Prediction</strong></td><td>Fast (compute distance to hyperplane)</td><td>Slow (compute distance to all training points)</td></tr>
+<tr><td><strong>Memory</strong></td><td>Efficient (only stores support vectors)</td><td>High (stores all training data)</td></tr>
+<tr><td><strong>Non-linearity</strong></td><td>Yes — via kernel trick</td><td>Yes — naturally handles complex boundaries</td></tr>
+<tr><td><strong>Feature Scaling</strong></td><td>Required</td><td>Required</td></tr>
+<tr><td><strong>Interpretability</strong></td><td>Low (especially with kernels)</td><td>High (can explain each decision)</td></tr>
+<tr><td><strong>Hyperparameters</strong></td><td>C, kernel, gamma</td><td>K, distance metric, weights</td></tr>
+<tr><td><strong>Curse of Dimensionality</strong></td><td>Handles well</td><td>Suffers significantly</td></tr>
+<tr><td><strong>Outlier Sensitivity</strong></td><td>Low (only support vectors matter)</td><td>Medium (depends on K)</td></tr>
+</table>
+
+<h2>When to Use Which</h2>
+<div class="g2">
+<div class="c hl"><span class="tag t-bl">Use SVM When:</span>
+<ul style="padding-left:18px">
+<li>High-dimensional data (many features)</li>
+<li>Clear margin of separation</li>
+<li>Small-to-medium dataset</li>
+<li>Memory is limited</li>
+<li>Text/image classification</li>
+<li>Medical diagnosis (needs robustness)</li>
+</ul>
+</div>
+<div class="c or"><span class="tag t-or">Use KNN When:</span>
+<ul style="padding-left:18px">
+<li>Non-linear decision boundaries</li>
+<li>Small-to-medium dataset</li>
+<li>Fast training needed (update data often)</li>
+<li>Need to explain individual predictions</li>
+<li>Recommendation systems</li>
+<li>Anomaly detection</li>
+</ul>
+</div>
+</div>
+
+<h2>Performance on Our Datasets</h2>
+<table class="tb">
+<tr><th>Dataset</th><th>Algorithm</th><th>Accuracy</th><th>Notes</th></tr>
+<tr><td>Breast Cancer (569 samples, 30 features)</td><td>SVM (linear)</td><td style="color:var(--green)">~97%</td><td>Excellent — SVM handles high dimensions well</td></tr>
+<tr><td>Iris (150 samples, 4 features)</td><td>KNN (K=1)</td><td style="color:var(--green)">100%</td><td>Simple, well-separated data — KNN excels</td></tr>
+</table>
+
+<h2>Common Interview Questions</h2>
+<div class="c pu"><span class="tag t-pu">Interview Prep</span>
+<table class="tb">
+<tr><th>Question</th><th>Key Answer</th></tr>
+<tr><td>What is a support vector?</td><td>Training points closest to the decision boundary that define the margin</td></tr>
+<tr><td>Why can't SVM handle large datasets well?</td><td>Training involves solving a quadratic optimization problem — O(n²) to O(n³) time complexity</td></tr>
+<tr><td>What is the kernel trick?</td><td>Implicitly mapping data to higher dimensions via kernel functions to make it linearly separable</td></tr>
+<tr><td>Why is K=1 risky in KNN?</td><td>Overfit to noise — a single noisy training point can misclassify test points</td></tr>
+<tr><td>How does KNN handle multi-class?</td><td>Naturally — majority vote works for any number of classes</td></tr>
+</table>
+</div>
+</div></div>
+
+<!-- PAGE 8: QUIZ -->
+<div class="page" id="p8"><div class="inner">
+<h1>Quick Quiz</h1>
+<p class="sub">Test your understanding of SVM and KNN!</p>
+
+<div class="qz" id="q1">
+<div class="qt">Q1: What are "support vectors" in SVM?</div>
+<div class="qo" onclick="chk('q1',this,false)">A) All training data points</div>
+<div class="qo" onclick="chk('q1',this,true)">B) The data points closest to the decision boundary that define the margin</div>
+<div class="qo" onclick="chk('q1',this,false)">C) The feature vectors used for classification</div>
+<div class="qo" onclick="chk('q1',this,false)">D) The hyperplane coefficients</div>
+<div class="qf" id="q1f"></div>
+</div>
+
+<div class="qz" id="q2">
+<div class="qt">Q2: You have image data with 1024 features. Which algorithm would likely perform better?</div>
+<div class="qo" onclick="chk('q2',this,true)">A) SVM — handles high dimensions well, resistant to curse of dimensionality</div>
+<div class="qo" onclick="chk('q2',this,false)">B) KNN — more neighbors means more accuracy</div>
+<div class="qo" onclick="chk('q2',this,false)">C) Both will perform equally</div>
+<div class="qo" onclick="chk('q2',this,false)">D) Neither — both fail on image data</div>
+<div class="qf" id="q2f"></div>
+</div>
+
+<div class="qz" id="q3">
+<div class="qt">Q3: In KNN with K=1, what happens if a training point is mislabeled?</div>
+<div class="qo" onclick="chk('q3',this,false)">A) Nothing — one point has no effect</div>
+<div class="qo" onclick="chk('q3',this,true)">B) Any test point near that mislabeled point will also be misclassified</div>
+<div class="qo" onclick="chk('q3',this,false)">C) The model automatically corrects the label</div>
+<div class="qo" onclick="chk('q3',this,false)">D) K=1 is immune to mislabeled points</div>
+<div class="qf" id="q3f"></div>
+</div>
+
+<div class="qz" id="q4">
+<div class="qt">Q4: Why MUST you scale features before applying SVM or KNN?</div>
+<div class="qo" onclick="chk('q4',this,false)">A) It makes the code run faster</div>
+<div class="qo" onclick="chk('q4',this,false)">B) sklearn requires it</div>
+<div class="qo" onclick="chk('q4',this,true)">C) Both algorithms use distances — unscaled features with large values dominate the distance calculation</div>
+<div class="qo" onclick="chk('q4',this,false)">D) Scaling is optional, it only slightly improves results</div>
+<div class="qf" id="q4f"></div>
+</div>
+
+<div class="qz" id="q5">
+<div class="qt">Q5: What does the C parameter in SVM control?</div>
+<div class="qo" onclick="chk('q5',this,false)">A) The number of classes</div>
+<div class="qo" onclick="chk('q5',this,false)">B) The kernel function complexity</div>
+<div class="qo" onclick="chk('q5',this,true)">C) The tradeoff between margin width and misclassification — large C = narrow margin but fewer errors</div>
+<div class="qo" onclick="chk('q5',this,false)">D) The number of support vectors</div>
+<div class="qf" id="q5f"></div>
+</div>
+
+<div class="qz" id="q6">
+<div class="qt">Q6: Why is KNN called a "lazy learner"?</div>
+<div class="qo" onclick="chk('q6',this,false)">A) It produces low accuracy</div>
+<div class="qo" onclick="chk('q6',this,true)">B) It doesn't learn a model during training — it stores all training data and computes at prediction time</div>
+<div class="qo" onclick="chk('q6',this,false)">C) It requires less data than other algorithms</div>
+<div class="qo" onclick="chk('q6',this,false)">D) It is easier to implement than other algorithms</div>
+<div class="qf" id="q6f"></div>
+</div>
+
+<div class="qz" id="q7">
+<div class="qt">Q7: In the Breast Cancer SVM notebook, why do we use PCA before visualizing the decision boundary?</div>
+<div class="qo" onclick="chk('q7',this,false)">A) PCA improves the accuracy of SVM</div>
+<div class="qo" onclick="chk('q7',this,true)">B) The dataset has 30 features — we reduce to 2 for human-readable visualization</div>
+<div class="qo" onclick="chk('q7',this,false)">C) PCA is required by sklearn's plotting functions</div>
+<div class="qo" onclick="chk('q7',this,false)">D) PCA removes outliers before visualization</div>
+<div class="qf" id="q7f"></div>
+</div>
+
+<h2 style="margin-top:32px;">📋 Summary Cheat Sheet</h2>
+<div class="c hl"><span class="tag t-bl">SVM in a Nutshell</span>
+<table class="tb">
+<tr><th>Concept</th><th>Key Point</th></tr>
+<tr><td>Core Idea</td><td>Find maximum margin hyperplane separating classes</td></tr>
+<tr><td>Support Vectors</td><td>Training points closest to hyperplane — they define it</td></tr>
+<tr><td>C parameter</td><td>Small C = wide margin (underfitting), Large C = narrow margin (overfitting)</td></tr>
+<tr><td>Kernel Trick</td><td>Projects data to higher dimensions implicitly for non-linear separation</td></tr>
+<tr><td>Best kernels</td><td>RBF for general use, Linear for high-dimensional data (text)</td></tr>
+<tr><td>Must scale?</td><td>YES — always StandardScaler before SVM</td></tr>
+</table>
+</div>
+<div class="c or"><span class="tag t-or">KNN in a Nutshell</span>
+<table class="tb">
+<tr><th>Concept</th><th>Key Point</th></tr>
+<tr><td>Core Idea</td><td>Classify by majority vote of K nearest training points</td></tr>
+<tr><td>Lazy learner</td><td>No training — stores all data, computes at prediction time</td></tr>
+<tr><td>K value</td><td>Small K = overfit, Large K = underfit. Use cross-validation!</td></tr>
+<tr><td>Distance metrics</td><td>Euclidean (default), Manhattan (high-dim), Minkowski (general)</td></tr>
+<tr><td>Must scale?</td><td>YES — distance-based algorithm, always scale</td></tr>
+<tr><td>Best for</td><td>Small-medium datasets, explainable predictions, non-linear boundaries</td></tr>
+</table>
+</div>
+</div></div>
+
+</div>
+<div class="pbar" id="pb"></div>
+<script>
+const P=["Overview","SVM Intro","Margin & Kernels","SVM Practical","KNN Intro","Distance & K","KNN Practical","SVM vs KNN","Quiz"];
+const nav=document.getElementById('tabNav'),ps=document.querySelectorAll('.page');
+let c=0;
+P.forEach((n,i)=>{const t=document.createElement('div');t.className='tab'+(i===0?' on':'');t.textContent=n;t.onclick=()=>go(i);nav.appendChild(t);});
+function go(i){ps[c].classList.remove('on');nav.children[c].classList.remove('on');c=i;ps[c].classList.add('on');nav.children[c].classList.add('on');ps[c].scrollTop=0;nav.children[c].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});upb();}
+function upb(){const p=ps[c];document.getElementById('pb').style.width=(p.scrollHeight<=p.clientHeight?100:p.scrollTop/(p.scrollHeight-p.clientHeight)*100)+'%';}
+ps.forEach(p=>p.addEventListener('scroll',upb));
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'&&c<P.length-1)go(c+1);if(e.key==='ArrowLeft'&&c>0)go(c-1);});
+upb();
+
+const Q={
+q1:{r:"Correct! Support vectors are the training points that sit exactly at the margin boundary (w·x + b = ±1). They are the only points that actually define the hyperplane — remove any other point and the boundary stays the same. Remove a support vector and the boundary changes.",w:"Support vectors are the critical boundary points. They are the training examples closest to the decision boundary. Only these points affect where the hyperplane is placed — this is why SVM is memory-efficient!"},
+q2:{r:"Correct! SVM is much better for high-dimensional data. KNN suffers severely from the curse of dimensionality — in 1024 dimensions, distances become meaningless because all points are equidistant. SVM with RBF or linear kernel handles 1024 features gracefully.",w:"SVM is the right choice here. KNN struggles in high dimensions (curse of dimensionality). With 1024 features, every test point is nearly equidistant from all training points, making neighbor voting meaningless. SVM handles high dimensions much better."},
+q3:{r:"Correct! With K=1, a single mislabeled training point creates an 'island' of wrong class. Any test point that falls near it will be misclassified. This shows why K=1 overfits — it's too sensitive to individual training points and noise.",w:"With K=1, each point in the test set is classified by exactly one neighbor. If that one neighbor is mislabeled, the test point is misclassified. This is why K=1 is prone to overfitting — it memorizes noise instead of learning the true pattern."},
+q4:{r:"Correct! Both SVM and KNN compute distances between points. If feature A ranges from 0–1000 and feature B ranges from 0–1, a distance of 10 in feature A completely drowns out feature B. The algorithm will essentially ignore feature B. Scaling puts all features on equal footing.",w:"Feature scaling is critical for both SVM and KNN because both rely on distances. Without scaling, features with large numeric ranges dominate the distance calculation, and features with small ranges are ignored. StandardScaler normalizes to mean=0, std=1 so all features contribute equally."},
+q5:{r:"Correct! C controls the soft-margin tradeoff. Small C allows more margin violations (points on the wrong side), creating a wider, more robust margin — better for noisy data. Large C penalizes violations heavily, creating a narrow margin that fits training data precisely — risks overfitting.",w:"C is the regularization parameter in SVM. It controls the tradeoff between margin width and training errors. Large C tries to classify every training point correctly (narrow margin, overfitting risk). Small C allows some misclassification but creates a wider, more generalizable margin."},
+q6:{r:"Correct! KNN is called 'lazy' because unlike SVM, it doesn't learn a model (like a hyperplane) during training. Instead, it just memorizes the training data and defers all computation to prediction time. Training is O(1) but prediction is O(n) where n is training set size.",w:"Lazy learning means the algorithm defers computation to prediction time. KNN stores all training data and computes distances to every training point when predicting. This is the opposite of SVM which does expensive training to find a simple hyperplane that enables fast prediction."},
+q7:{r:"Correct! The Breast Cancer dataset has 30 features — humans can't visualize 30-dimensional space! PCA reduces 30 dimensions to the 2 most informative dimensions (principal components) so we can plot the decision boundary as a 2D image. Note: this is an approximation; the actual SVM boundary exists in 30D.",w:"PCA is used purely for visualization. The dataset has 30 features which can't be plotted. PCA compresses 30D to 2D while preserving maximum variance, allowing us to create a human-readable scatter plot with the decision boundary. The actual SVM model still operates in the original 30-dimensional space."}
+};
+function chk(id,el,ok){const ct=document.getElementById(id);if(ct.classList.contains('done'))return;ct.classList.add('done');const f=document.getElementById(id+'f');if(ok){el.classList.add('ok');f.className='qf show r';f.textContent=Q[id].r;}else{el.classList.add('no');f.className='qf show w';f.textContent=Q[id].w;}}
+</script>
+</body>
+</html>
