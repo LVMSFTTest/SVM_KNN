@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DS & AI Session 2 — 1 Hour Deep Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080f1e;--card:#0f1a2e;--alt:#162236;--code:#060b14;
+    --accent:#6366f1;--glow:rgba(99,102,241,.1);
+    --teal:#2dd4bf;--purple:#a78bfa;--gold:#fbbf24;--coral:#f87171;
+    --green:#34d399;--orange:#fb923c;--sky:#60a5fa;--pink:#f472b6;
+    --text:#e2e8f0;--muted:#8899aa;--dim:#3d5166;--border:#1a2a3e;
+    --grad1:linear-gradient(135deg,rgba(99,102,241,.12),rgba(45,212,191,.06));
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+
+  /* NAV */
+  .top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,15,30,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+  .nav-brand{display:flex;align-items:center;gap:10px;padding:10px 20px 0;}
+  .nav-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);}
+  .nav-title{font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.3px;}
+  .nav-time{margin-left:auto;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .nav-tabs{display:flex;overflow-x:auto;padding:6px 12px;gap:3px;scrollbar-width:none;}
+  .nav-tabs::-webkit-scrollbar{display:none;}
+  .nav-tab{flex-shrink:0;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .25s;border:1px solid transparent;white-space:nowrap;letter-spacing:.2px;}
+  .nav-tab:hover{color:var(--text);background:var(--card);}
+  .nav-tab.active{color:#fff;background:var(--accent);border-color:var(--accent);}
+  .nav-tab .min{font-size:9px;opacity:.7;margin-left:3px;}
+
+  /* PAGES */
+  .pages-wrap{margin-top:86px;height:calc(100vh - 86px);overflow:hidden;}
+  .page{display:none;height:100%;overflow-y:auto;padding:28px 20px 70px;scroll-behavior:smooth;}
+  .page.active{display:block;}
+  .pg{max-width:860px;margin:0 auto;}
+
+  /* HERO BANNER */
+  .hero{background:var(--grad1);border:1px solid rgba(99,102,241,.2);border-radius:18px;padding:28px 28px 22px;margin-bottom:28px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(99,102,241,.08) 0%,transparent 70%);}
+  .hero-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+  .hero h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;line-height:1.2;margin-bottom:8px;}
+  .hero-sub{font-size:15px;color:var(--muted);line-height:1.65;}
+  .hero-meta{display:flex;gap:20px;margin-top:16px;flex-wrap:wrap;}
+  .hero-stat{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);}
+  .hero-stat span{font-weight:700;color:var(--text);}
+
+  /* TYPO */
+  h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin:32px 0 12px;color:var(--sky);}
+  h3{font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--teal);}
+  p,li{font-size:14px;line-height:1.75;margin-bottom:8px;}
+
+  /* TIMELINE */
+  .timeline{margin:16px 0;}
+  .tl-item{display:flex;gap:14px;margin-bottom:10px;align-items:flex-start;}
+  .tl-time{flex-shrink:0;width:60px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:700;padding-top:10px;}
+  .tl-line{flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+  .tl-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:11px;flex-shrink:0;}
+  .tl-track{width:2px;background:var(--border);flex:1;margin-top:3px;}
+  .tl-body{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:border-color .25s;}
+  .tl-body:hover{border-color:rgba(99,102,241,.25);}
+  .tl-topic{font-weight:700;font-size:14px;margin-bottom:3px;}
+  .tl-desc{font-size:12.5px;color:var(--muted);}
+  .tl-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+
+  /* CARD */
+  .cd{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin:14px 0;}
+  .cd.hl{border-left:3px solid var(--accent);}
+  .cd.warn{border-left:3px solid var(--gold);}
+  .cd.ok{border-left:3px solid var(--green);}
+  .cd.info{border-left:3px solid var(--sky);}
+  .cd.purp{border-left:3px solid var(--purple);}
+  .cd.coral{border-left:3px solid var(--coral);}
+  .cd.pink{border-left:3px solid var(--pink);}
+
+  /* TAGS */
+  .tg{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-bottom:7px;}
+  .bl{background:rgba(99,102,241,.12);color:var(--accent);}
+  .yl{background:rgba(251,191,36,.12);color:var(--gold);}
+  .gn{background:rgba(52,211,153,.12);color:var(--green);}
+  .sk{background:rgba(96,165,250,.12);color:var(--sky);}
+  .pp{background:rgba(167,139,250,.12);color:var(--purple);}
+  .or{background:rgba(251,146,60,.12);color:var(--orange);}
+  .pk{background:rgba(244,114,182,.12);color:var(--pink);}
+  .te{background:rgba(45,212,191,.12);color:var(--teal);}
+
+  /* FORMULA / CODE */
+  .fm{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:10px 0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);}
+  .co{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:10px 0;overflow-x:auto;position:relative;}
+  .co code{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;color:var(--text);}
+  .cl{position:absolute;top:6px;right:10px;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--dim);text-transform:uppercase;}
+  .kw{color:#c792ea;}.fn{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;}.num{color:#f78c6c;}
+
+  /* EXAMPLE BOX */
+  .ex{background:linear-gradient(135deg,rgba(99,102,241,.05),rgba(45,212,191,.03));border:1px solid rgba(99,102,241,.15);border-radius:14px;padding:18px;margin:14px 0;}
+  .ex .et{font-size:13.5px;font-weight:700;color:var(--sky);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+  /* TABLE */
+  .tb{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}
+  .tb th{background:var(--alt);color:var(--accent);padding:8px 11px;text-align:left;font-weight:700;font-size:11.5px;letter-spacing:.3px;border-bottom:2px solid var(--border);}
+  .tb td{padding:8px 11px;border-bottom:1px solid var(--border);}
+  .tb tr:hover td{background:rgba(99,102,241,.03);}
+
+  /* GRID */
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0;}
+  .gc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;}
+  .gc h4{font-size:13px;font-weight:700;margin-bottom:6px;}
+
+  /* STEPS */
+  .st{list-style:none;padding:0;counter-reset:s;}
+  .st li{counter-increment:s;padding:11px 11px 11px 48px;position:relative;margin-bottom:6px;border-radius:10px;background:var(--card);border:1px solid var(--border);}
+  .st li::before{content:counter(s);position:absolute;left:11px;top:11px;width:24px;height:24px;background:var(--glow);border:1px solid rgba(99,102,241,.25);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);}
+
+  /* QUIZ */
+  .qz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin:14px 0;}
+  .qt{font-weight:700;margin-bottom:10px;font-size:14px;}
+  .qo{display:block;padding:9px 13px;margin:4px 0;border-radius:8px;border:1px solid var(--border);background:var(--alt);cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;}
+  .qo:hover{border-color:var(--accent);color:var(--text);}
+  .qo.ok{border-color:var(--green);background:rgba(52,211,153,.06);color:var(--green);}
+  .qo.no{border-color:var(--coral);background:rgba(248,113,113,.06);color:var(--coral);}
+  .qf{display:none;margin-top:8px;padding:9px 12px;border-radius:8px;font-size:12.5px;line-height:1.6;}
+  .qf.show{display:block;}.qf.r{background:rgba(52,211,153,.06);color:var(--green);}.qf.w{background:rgba(248,113,113,.06);color:var(--coral);}
+
+  /* PROMPT CARDS */
+  .pc{background:var(--code);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:14px 16px;margin:8px 0;font-size:13px;line-height:1.6;}
+  .pc .pl{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+  .pc .pt{color:var(--text);}
+  .pc .pr{color:var(--teal);font-size:12px;margin-top:8px;}
+
+  /* FLOW ROW */
+  .fl{display:flex;align-items:center;gap:6px;margin:14px 0;flex-wrap:wrap;}
+  .fb{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 13px;font-size:12px;font-weight:600;flex-shrink:0;text-align:center;}
+  .fa{color:var(--accent);font-size:16px;}
+
+  /* BADGE ROW */
+  .bds{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;}
+  .bd{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;flex:1;min-width:100px;text-align:center;}
+  .bd .v{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--accent);}
+  .bd .l{font-size:10.5px;color:var(--muted);margin-top:2px;}
+
+  /* PROGRESS BAR */
+  .prog-bar{height:4px;background:var(--border);border-radius:2px;margin:6px 0;}
+  .prog-fill{height:100%;border-radius:2px;transition:width .3s;}
+
+  .prog{position:fixed;bottom:0;left:0;height:3px;background:var(--accent);transition:width .15s;z-index:100;}
+
+  /* TOOL COMPARISON */
+  .tool-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin:8px 0;}
+  .tool-icon{font-size:22px;margin-bottom:6px;}
+  .tool-name{font-weight:700;font-size:14px;margin-bottom:4px;}
+  .tool-desc{font-size:12.5px;color:var(--muted);line-height:1.55;}
+
+  /* LLM BRAIN VIZ */
+  .brain-wrap{background:var(--code);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;margin:14px 0;}
+  .token-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0;}
+  .token{padding:6px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:var(--alt);border:1px solid var(--border);cursor:pointer;transition:all .3s;}
+  .token.hi{background:rgba(99,102,241,.2);border-color:var(--accent);color:var(--accent);}
+  .token.active{background:rgba(251,191,36,.15);border-color:var(--gold);color:var(--gold);transform:scale(1.05);}
+
+  @media(max-width:700px){
+    h2{font-size:19px;}.hero h1{font-size:22px;}
+    .g2,.g3{grid-template-columns:1fr;}
+    .page{padding:18px 13px 60px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    <div class="nav-title">DSAI Session 2 — Continuation (1 Hour)</div>
+    <div class="nav-time">Total: 60 min</div>
+  </div>
+  <div class="nav-tabs" id="navTabs"></div>
+</nav>
+
+<div class="pages-wrap">
+
+<!-- ================================================================ -->
+<!-- PAGE 0: SESSION GUIDE -->
+<!-- ================================================================ -->
+<div class="page" id="page-0">
+<div class="pg">
+  <div class="hero">
+    <div class="hero-label">Session 2 — Continuation</div>
+    <h1>From Setup to First AI Conversation<br>— in 60 Minutes</h1>
+    <p class="hero-sub">Building on Session 1 (DS/AI overview, career paths, tools intro), this session finishes installation, explores how AI actually works, and introduces Prompt Engineering — the #1 skill every DS/AI beginner must master today.</p>
+    <div class="hero-meta">
+      <div class="hero-stat"><span>60 min</span> total</div>
+      <div class="hero-stat"><span>5</span> modules</div>
+      <div class="hero-stat"><span>0</span> prior coding needed</div>
+      <div class="hero-stat"><span>100%</span> hands-on examples</div>
+    </div>
+  </div>
+
+  <h2>Recommended Session Design</h2>
+  <p>Here's the full 1-hour flow I've designed for you, picking up exactly where Session 1 ended. Each block is carefully timed.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">0–8 min</div>
+      <div class="tl-line"><div class="tl-dot"></div><div class="tl-track"></div></div>
+      <div class="tl-body">
+        <div class="tl-topic">⚡ Quick Installation Wrap-Up</div>
+        <div class="tl-desc">Verify all tools installed. Fix common errors live. Do a 60-second "hello world" in Python + Jupyter.</div>
+        <div class="tl-tags"><span class="tg te">Hands-on</span><span class="tg bl">Setup</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">8–20 min</div>
+      <div class="tl-line"><div class="tl-dot"></div><div class="tl-track"></div></div>
+      <div class="tl-body">
+        <div class="tl-topic">🧠 How AI & LLMs Actually Work</div>
+        <div class="tl-desc">Demystify the "black box" — training, patterns, and why LLMs are powerful. Non-technical, analogy-heavy. Builds crucial mental model before coding.</div>
+        <div class="tl-tags"><span class="tg pp">Core Concept</span><span class="tg sk">Beginner-Friendly</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">20–40 min</div>
+      <div class="tl-line"><div class="tl-dot"></div><div class="tl-track"></div></div>
+      <div class="tl-body">
+        <div class="tl-topic">💬 Prompt Engineering Fundamentals</div>
+        <div class="tl-desc">The most in-demand practical skill. Zero to hero in prompting — with live demo of bad vs good prompts. Career switchers can use this on Day 1.</div>
+        <div class="tl-tags"><span class="tg gn">Career-Ready</span><span class="tg yl">HIGH IMPACT</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">40–52 min</div>
+      <div class="tl-line"><div class="tl-dot"></div><div class="tl-track"></div></div>
+      <div class="tl-body">
+        <div class="tl-topic">🐍 Python in 10 Minutes — Zero Fear</div>
+        <div class="tl-desc">Live-code basics: variables, lists, print. Context: "Python is English for computers." Specifically designed for zero-coding freshers. No jargon.</div>
+        <div class="tl-tags"><span class="tg te">Live Coding</span><span class="tg bl">Foundation</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">52–60 min</div>
+      <div class="tl-line"><div class="tl-dot"></div><div class="tl-track"></div></div>
+      <div class="tl-body">
+        <div class="tl-topic">🎯 Wrap-Up: Quick Quiz + What's Next</div>
+        <div class="tl-desc">5-question quiz on today's topics. Preview of upcoming sessions. Assignment: write 5 prompts for a use-case they care about.</div>
+        <div class="tl-tags"><span class="tg pk">Quiz</span><span class="tg or">Assignment</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd ok">
+    <span class="tg gn">Why This Order?</span>
+    <p><strong>Installation (8 min)</strong> → everyone is on the same page before new content. <strong>How AI works (12 min)</strong> → mental model before touching prompts. <strong>Prompt Engineering (20 min)</strong> → highest ROI for freshers and career switchers — they can apply it today. <strong>Python basics (12 min)</strong> → end with code so they go home wanting to practice.</p>
+  </div>
+
+  <div class="cd warn">
+    <span class="tg yl">Instructor Note</span>
+    <p>The biggest mistake in introductory DS/AI sessions is going too fast into syntax. Students need the "WHY" before the "HOW." The first 20 minutes of this session deliberately build context — trust the design.</p>
+  </div>
+</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PAGE 1: INSTALLATION WRAP-UP -->
+<!-- ================================================================ -->
+<div class="page" id="page-1">
+<div class="pg">
+  <div class="hero">
+    <div class="hero-label">Module 1 — 0 to 8 Minutes</div>
+    <h1>Installation Wrap-Up<br>& First Hello World</h1>
+    <p class="hero-sub">Get everyone verified and running before covering any new concepts. A bad setup experience kills motivation early.</p>
+  </div>
+
+  <h2>Quick Verification Checklist</h2>
+  <p>Ask every student to open their terminal / Anaconda Prompt and run these commands one by one:</p>
+
+  <div class="co"><span class="cl">Terminal</span><code><span class="cm"># 1. Check Python is installed</span>
+python --version
+<span class="cm"># Expected output: Python 3.11.x or 3.12.x</span>
+
+<span class="cm"># 2. Check Jupyter is available</span>
+jupyter --version
+<span class="cm"># Expected output: should show jupyter core version</span>
+
+<span class="cm"># 3. Launch Jupyter Notebook</span>
+jupyter notebook
+<span class="cm"># Opens browser automatically at http://localhost:8888</span></code></div>
+
+  <h2>Common Errors & Quick Fixes</h2>
+  <table class="tb">
+    <tr><th>Error Message</th><th>Cause</th><th>Fix (60 seconds)</th></tr>
+    <tr><td><code style="color:var(--coral);">'python' not found</code></td><td>PATH not set</td><td>Re-install Anaconda, tick "Add to PATH" checkbox</td></tr>
+    <tr><td><code style="color:var(--coral);">Permission denied</code></td><td>Admin rights</td><td>Run Anaconda Prompt as Administrator</td></tr>
+    <tr><td>Browser doesn't open</td><td>Port conflict</td><td>Try <code>jupyter notebook --port=8889</code></td></tr>
+    <tr><td>Slow loading</td><td>First launch</td><td>Normal — just wait 30 seconds</td></tr>
+  </table>
+
+  <h2>The Famous "Hello World"</h2>
+  <p>Once Jupyter opens, create a new notebook and type this in the first cell. Press <strong>Shift + Enter</strong> to run:</p>
+
+  <div class="co"><span class="cl">Jupyter Cell</span><code><span class="cm"># Your very first Python program!</span>
+<span class="fn">print</span>(<span class="str">"Hello, Data Science World!"</span>)
+
+<span class="cm"># Let's do a mini calculation</span>
+students_in_class = <span class="num">25</span>
+sessions_per_week = <span class="num">3</span>
+total_sessions = students_in_class * sessions_per_week
+<span class="fn">print</span>(<span class="str">f"Total sessions this week: {total_sessions}"</span>)</code></div>
+
+  <div class="ex">
+    <div class="et">🎓 Why This Matters</div>
+    <p>Running this code confirms: Python is installed, Jupyter works, and you can write and execute code. This is 80% of what data scientists do — write small pieces of code and see results immediately. Celebrate this moment with your class!</p>
+  </div>
+
+  <h2>30-Second Jupyter Tour</h2>
+  <div class="g2">
+    <div class="gc">
+      <h4 style="color:var(--teal);">Keyboard Shortcuts</h4>
+      <table class="tb">
+        <tr><td><code>Shift+Enter</code></td><td>Run cell</td></tr>
+        <tr><td><code>Esc → A</code></td><td>New cell above</td></tr>
+        <tr><td><code>Esc → B</code></td><td>New cell below</td></tr>
+        <tr><td><code>Esc → D D</code></td><td>Delete cell</td></tr>
+      </table>
+    </div>
+    <div class="gc">
+      <h4 style="color:var(--sky);">What the Icons Mean</h4>
+      <p style="font-size:12.5px;margin-bottom:4px;"><strong>▶ Run</strong> — Execute selected cell</p>
+      <p style="font-size:12.5px;margin-bottom:4px;"><strong>■ Stop</strong> — Stop running code</p>
+      <p style="font-size:12.5px;margin-bottom:4px;"><strong>⟳ Restart</strong> — Fresh start (clears memory)</p>
+      <p style="font-size:12.5px;"><strong>In [*]</strong> — Cell is running (wait!)</p>
+    </div>
+  </div>
+
+  <div class="cd hl">
+    <span class="tg bl">Instructor Tip: The "It's Just a Calculator" Frame</span>
+    <p>Tell students: "Jupyter Notebook is just a very smart calculator. You type math and instructions, press Shift+Enter, and get answers. That's it. Everything else we learn is just more complex instructions." This removes fear instantly.</p>
+  </div>
+</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PAGE 2: HOW AI WORKS -->
+<!-- ================================================================ -->
+<div class="page" id="page-2">
+<div class="pg">
+  <div class="hero">
+    <div class="hero-label">Module 2 — 8 to 20 Minutes</div>
+    <h1>How AI & LLMs Actually Work<br>— No Jargon</h1>
+    <p class="hero-sub">Before writing a single prompt, students need a mental model of what AI is "thinking." This module builds that model using everyday analogies.</p>
+  </div>
+
+  <h2>The Simple Truth About AI</h2>
+
+  <div class="cd hl">
+    <span class="tg bl">One-Line Explanation</span>
+    <p style="font-size:16px;"><strong>AI learns patterns from millions of examples and uses those patterns to make predictions.</strong></p>
+    <p>That's it. Everything else is details.</p>
+  </div>
+
+  <div class="ex">
+    <div class="et">🍕 Analogy 1: The Pizza Chef</div>
+    <p>Imagine a chef who has eaten <strong>10 million pizzas</strong> from around the world. Now when you describe a pizza ("thin crust, spicy, vegetarian"), they instantly know what ingredients to use — not because they memorized a recipe, but because they've absorbed patterns from millions of experiences.</p>
+    <p><strong>AI works the same way.</strong> It "ate" (trained on) billions of words, images, or data points. Now when you give it input, it pattern-matches to generate the best response.</p>
+  </div>
+
+  <h2>What Is a Large Language Model (LLM)?</h2>
+
+  <div class="g2">
+    <div class="cd info" style="margin:0;">
+      <span class="tg sk">What LLMs Are Good At</span>
+      <ul style="padding-left:16px;">
+        <li>Writing and summarizing text</li>
+        <li>Answering questions</li>
+        <li>Writing and explaining code</li>
+        <li>Translating languages</li>
+        <li>Brainstorming ideas</li>
+        <li>Analyzing documents</li>
+      </ul>
+    </div>
+    <div class="cd coral" style="margin:0;">
+      <span class="tg" style="background:rgba(248,113,113,.12);color:var(--coral);">What LLMs Struggle With</span>
+      <ul style="padding-left:16px;">
+        <li>Real-time information (they have a cutoff date)</li>
+        <li>Precise math calculations</li>
+        <li>100% factual accuracy always</li>
+        <li>Knowing private/internal data</li>
+        <li>Physical world interaction</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>How Training Works — The "Autocomplete Monster" Analogy</h2>
+
+  <div class="ex">
+    <div class="et">📱 Analogy 2: Phone Autocomplete × 1000</div>
+    <p>You know how your phone suggests the next word when you're typing? It learned from your texts. Now imagine that same idea but:</p>
+    <ul style="padding-left:18px;">
+      <li>Instead of your texts → it read <strong>all of Wikipedia, every book, most of the internet</strong></li>
+      <li>Instead of 3 word suggestions → it can write <strong>entire essays, code, and stories</strong></li>
+      <li>Instead of a phone chip → it uses <strong>thousands of specialized processors (GPUs)</strong> for months</li>
+    </ul>
+    <p><strong>The result:</strong> ChatGPT, Claude, Gemini — these are ultra-powerful autocomplete systems that understand context, instructions, and nuance.</p>
+  </div>
+
+  <h2>The Training Process (Simplified)</h2>
+  <ol class="st">
+    <li><strong>Collect data:</strong> Gather billions of sentences, articles, books from the internet</li>
+    <li><strong>Show patterns:</strong> "The cat sat on the ___" → model predicts "mat" (or "floor", "chair")</li>
+    <li><strong>Measure error:</strong> Was the prediction good? By how much was it wrong?</li>
+    <li><strong>Adjust weights:</strong> Tiny internal adjustments to improve next prediction (happens billions of times)</li>
+    <li><strong>Repeat millions of times:</strong> The model slowly gets better and better at understanding language</li>
+    <li><strong>Human feedback:</strong> Real humans rate responses. Model learns to be helpful, not just "correct"</li>
+  </ol>
+
+  <h2>Key Terms — Made Simple</h2>
+  <table class="tb">
+    <tr><th>Scary Term</th><th>What It Actually Means</th><th>Real-Life Equivalent</th></tr>
+    <tr><td><strong>Neural Network</strong></td><td>Layers of math calculations inspired by how brains work</td><td>A very complex decision tree</td></tr>
+    <tr><td><strong>Training</strong></td><td>Teaching the AI by showing it lots of examples</td><td>How a child learns to read</td></tr>
+    <tr><td><strong>Parameters / Weights</strong></td><td>The internal "memory" numbers of an AI model</td><td>The chef's accumulated taste memory</td></tr>
+    <tr><td><strong>Token</strong></td><td>A small piece of text (roughly 3/4 of a word)</td><td>A LEGO brick — text is built from tokens</td></tr>
+    <tr><td><strong>Context Window</strong></td><td>How much text the AI can "see" at once</td><td>Short-term memory limit</td></tr>
+    <tr><td><strong>Hallucination</strong></td><td>When AI confidently gives wrong information</td><td>A student bluffing an answer they don't know</td></tr>
+  </table>
+
+  <div class="cd warn">
+    <span class="tg yl">Critical Concept: AI Is Not "Thinking"</span>
+    <p>AI doesn't "understand" like humans do. It's an extremely sophisticated pattern matcher. It generates the most statistically likely response based on its training. This is why you should always verify important AI outputs — it can be confidently wrong.</p>
+  </div>
+
+  <h2>Quick Live Demo Ideas for Instructor</h2>
+  <div class="g2">
+    <div class="gc">
+      <h4 style="color:var(--teal);">Demo 1: Hallucination Test</h4>
+      <p style="font-size:12.5px;">Ask ChatGPT/Claude: "What is the biography of [a made-up name]?" Watch it confidently invent a person. Lesson: always verify.</p>
+    </div>
+    <div class="gc">
+      <h4 style="color:var(--sky);">Demo 2: Token Thinking</h4>
+      <p style="font-size:12.5px;">Ask: "Count the letter R in the word STRAWBERRY." Often gets it wrong! Shows that AI processes tokens, not letters — fascinating for students.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PAGE 3: PROMPT ENGINEERING -->
+<!-- ================================================================ -->
+<div class="page" id="page-3">
+<div class="pg">
+  <div class="hero">
+    <div class="hero-label">Module 3 — 20 to 40 Minutes ★ HIGHEST IMPACT</div>
+    <h1>Prompt Engineering<br>From Zero to Powerful</h1>
+    <p class="hero-sub">The most in-demand AI skill of 2024–2025. Career switchers can use this immediately. A good prompt is the difference between a useless AI response and a professional-grade output.</p>
+  </div>
+
+  <h2>What Is a Prompt?</h2>
+  <div class="cd hl">
+    <span class="tg bl">Definition</span>
+    <p>A <strong>prompt</strong> is the instruction or question you give to an AI. <strong>Prompt Engineering</strong> is the skill of crafting prompts that get you exactly what you want — reliably and efficiently.</p>
+    <p>Think of it as: <strong>Learning how to "talk" to the most powerful assistant in history.</strong></p>
+  </div>
+
+  <h2>Why This Matters for Your Career</h2>
+  <div class="bds">
+    <div class="bd" style="border-color:var(--accent);"><div class="v">72%</div><div class="l">of companies hiring AI prompt engineers in 2024</div></div>
+    <div class="bd" style="border-color:var(--green);"><div class="v">$0</div><div class="l">cost to start — free AI tools available now</div></div>
+    <div class="bd" style="border-color:var(--gold);"><div class="v">Day 1</div><div class="l">skill — you can use this before writing any code</div></div>
+    <div class="bd" style="border-color:var(--teal);"><div class="v">10×</div><div class="l">productivity boost reported by professionals</div></div>
+  </div>
+
+  <h2>The 5 Golden Rules of Prompting</h2>
+
+  <!-- RULE 1 -->
+  <div class="cd hl">
+    <span class="tg bl">Rule 1 — Be Specific & Detailed</span>
+    <div class="g2" style="margin-top:10px;">
+      <div class="pc">
+        <div class="pl">❌ Weak Prompt</div>
+        <div class="pt">Write about climate change.</div>
+        <div class="pr">Problem: Too vague. What format? What audience? What angle? AI will guess and likely miss.</div>
+      </div>
+      <div class="pc">
+        <div class="pl">✅ Strong Prompt</div>
+        <div class="pt">Write a 200-word summary of climate change causes for a 10th-grade student. Use simple language, 3 bullet points, and end with one thing they can do to help.</div>
+        <div class="pr">Why: Specific length, audience, format, and action item. AI knows exactly what you want.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RULE 2 -->
+  <div class="cd purp">
+    <span class="tg pp">Rule 2 — Assign a Role / Persona</span>
+    <p>Tell the AI WHO to be. This dramatically improves quality because it sets context for the entire response.</p>
+    <div class="g2">
+      <div class="pc">
+        <div class="pl">❌ Without Role</div>
+        <div class="pt">Explain machine learning.</div>
+        <div class="pr">Generic textbook answer. Could be for anyone.</div>
+      </div>
+      <div class="pc">
+        <div class="pl">✅ With Role</div>
+        <div class="pt">You are a friendly data science teacher. Explain machine learning to a complete beginner using only food analogies. No technical jargon.</div>
+        <div class="pr">Specific persona + audience + constraint = targeted, useful output.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RULE 3 -->
+  <div class="cd info">
+    <span class="tg sk">Rule 3 — Provide Context & Examples</span>
+    <p>The more context you give, the better the output. If you want a specific style, show an example.</p>
+    <div class="pc">
+      <div class="pl">✅ With Context + Example</div>
+      <div class="pt">I'm applying for a Data Analyst job at a bank. I have 3 years of Excel experience and just completed a Python course. Here is my current summary: "I am good with data." Rewrite this summary in a professional, confident tone. Here's an example of the style I want: "Results-driven analyst with 5 years transforming complex datasets into business insights..."</div>
+    </div>
+  </div>
+
+  <!-- RULE 4 -->
+  <div class="cd ok">
+    <span class="tg gn">Rule 4 — Specify the Output Format</span>
+    <p>AI can output in many formats. Tell it exactly what you want.</p>
+    <table class="tb">
+      <tr><th>Format Request</th><th>Example Use Case</th></tr>
+      <tr><td>"Give me a numbered list"</td><td>Steps to follow</td></tr>
+      <tr><td>"Format as a table with columns: X, Y, Z"</td><td>Comparison data</td></tr>
+      <tr><td>"Write as bullet points under 3 headings"</td><td>Report sections</td></tr>
+      <tr><td>"Output only the Python code, no explanation"</td><td>Code generation</td></tr>
+      <tr><td>"Give me exactly 5 options, one per line"</td><td>Brainstorming</td></tr>
+      <tr><td>"Respond in JSON format"</td><td>For developers/apps</td></tr>
+    </table>
+  </div>
+
+  <!-- RULE 5 -->
+  <div class="cd warn">
+    <span class="tg yl">Rule 5 — Iterate! Don't Accept the First Answer</span>
+    <p>Prompting is a conversation, not a one-shot command. If the first response isn't perfect, refine it.</p>
+    <div class="fl">
+      <div class="fb" style="border-color:var(--accent);">First Prompt</div>
+      <div class="fa">→</div>
+      <div class="fb">AI Response</div>
+      <div class="fa">→</div>
+      <div class="fb" style="border-color:var(--teal);">Refine: "Make it shorter"</div>
+      <div class="fa">→</div>
+      <div class="fb">Better Response</div>
+      <div class="fa">→</div>
+      <div class="fb" style="border-color:var(--green);">Perfect Output ✓</div>
+    </div>
+    <p><strong>Refinement phrases to teach students:</strong></p>
+    <ul style="padding-left:18px;">
+      <li>"Make this more formal/casual"</li>
+      <li>"Expand on the second point"</li>
+      <li>"Now make it shorter — under 100 words"</li>
+      <li>"Give me 3 alternative versions"</li>
+      <li>"That's good, but add an Indian context/example"</li>
+    </ul>
+  </div>
+
+  <h2>The CRISP Framework — Easy to Remember</h2>
+  <div class="g3">
+    <div class="gc" style="border-top:3px solid var(--accent);">
+      <h4 style="color:var(--accent);">C — Context</h4>
+      <p style="font-size:12.5px;">Who are you? What's the situation?</p>
+    </div>
+    <div class="gc" style="border-top:3px solid var(--teal);">
+      <h4 style="color:var(--teal);">R — Role</h4>
+      <p style="font-size:12.5px;">Who should AI be? Expert, teacher, friend?</p>
+    </div>
+    <div class="gc" style="border-top:3px solid var(--gold);">
+      <h4 style="color:var(--gold);">I — Instruction</h4>
+      <p style="font-size:12.5px;">What exactly do you want done?</p>
+    </div>
+    <div class="gc" style="border-top:3px solid var(--green);">
+      <h4 style="color:var(--green);">S — Specifics</h4>
+      <p style="font-size:12.5px;">Length, tone, audience, constraints</p>
+    </div>
+    <div class="gc" style="border-top:3px solid var(--purple);">
+      <h4 style="color:var(--purple);">P — Pattern</h4>
+      <p style="font-size:12.5px;">Show an example of what you want</p>
+    </div>
+  </div>
+
+  <h2>Live Classroom Exercise — Build a Prompt Together</h2>
+  <div class="ex">
+    <div class="et">🎓 5-Minute Group Activity</div>
+    <p><strong>Scenario:</strong> You want AI to help you prepare for a Data Analyst job interview.</p>
+    <p>Ask students to build a prompt using CRISP. Compare results. Then reveal this optimized version:</p>
+    <div class="pc" style="margin-top:10px;">
+      <div class="pl">✅ CRISP-Optimized Prompt</div>
+      <div class="pt">You are an experienced Data Analyst interviewer at a top Indian IT company. I am a fresh graduate preparing for my first Data Analyst interview. I have basic Python and Excel skills. Generate 5 likely interview questions about data cleaning, with model answers in simple English. Format as: Question → Answer (under 3 sentences). Make the answers confident and specific.</div>
+    </div>
+  </div>
+
+  <h2>DS/AI-Specific Prompt Templates</h2>
+  <p>Give students these templates to use immediately:</p>
+
+  <div class="pc">
+    <div class="pl">Template 1 — Explain a Concept</div>
+    <div class="pt">Explain [CONCEPT] to me like I'm a complete beginner. Use one real-life analogy from [India/Finance/Healthcare etc.]. Keep it under 150 words. End with one question to test my understanding.</div>
+  </div>
+  <div class="pc">
+    <div class="pl">Template 2 — Debug My Code</div>
+    <div class="pt">I'm learning Python. This code gives an error: [PASTE CODE]. The error message is: [PASTE ERROR]. Explain what's wrong in simple terms and show me the corrected code with comments explaining what changed.</div>
+  </div>
+  <div class="pc">
+    <div class="pl">Template 3 — Career Help</div>
+    <div class="pt">I am a [YOUR BACKGROUND] transitioning to Data Science. I have [X months/years] to prepare. Create a 4-week learning plan with daily topics. Focus on [Python/SQL/Statistics]. Include free resources for each week.</div>
+  </div>
+  <div class="pc">
+    <div class="pl">Template 4 — Data Analysis Help</div>
+    <div class="pt">I have a dataset with columns: [LIST COLUMNS]. I want to find [GOAL]. What Python code should I write? Explain each line. Assume I am a beginner and use pandas library.</div>
+  </div>
+</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PAGE 4: PYTHON BASICS -->
+<!-- ================================================================ -->
+<div class="page" id="page-4">
+<div class="pg">
+  <div class="hero">
+    <div class="hero-label">Module 4 — 40 to 52 Minutes</div>
+    <h1>Python in 10 Minutes<br>Zero Fear, Maximum Fun</h1>
+    <p class="hero-sub">First code session. Focus: remove fear, build confidence. We don't need to cover everything — we need students to go home wanting to code more.</p>
+  </div>
+
+  <h2>Before We Code — The Right Mindset</h2>
+  <div class="cd hl">
+    <span class="tg bl">Tell Your Students This</span>
+    <p>"Python is just English with strict grammar. Instead of saying 'Calculate the average of these numbers', you type <code style="color:var(--teal);">sum(numbers) / len(numbers)</code>. You already know the logic — Python just has its own spelling rules."</p>
+  </div>
+
+  <h2>Concept 1: Variables — Labelled Boxes</h2>
+  <p>A variable is like a labelled box. You put something inside, and you can use it later.</p>
+
+  <div class="co"><span class="cl">Python — Run in Jupyter</span><code><span class="cm"># Creating variables — like labelling boxes</span>
+student_name = <span class="str">"Priya"</span>
+student_age  = <span class="num">22</span>
+gpa          = <span class="num">3.8</span>
+is_enrolled  = <span class="kw">True</span>
+
+<span class="cm"># Using variables</span>
+<span class="fn">print</span>(<span class="str">f"Student: {student_name}, Age: {student_age}, GPA: {gpa}"</span>)
+<span class="cm"># Output: Student: Priya, Age: 22, GPA: 3.8</span>
+
+<span class="cm"># Python figures out the "type" automatically</span>
+<span class="fn">print</span>(<span class="fn">type</span>(student_name))  <span class="cm"># &lt;class 'str'&gt;  (text)</span>
+<span class="fn">print</span>(<span class="fn">type</span>(student_age))   <span class="cm"># &lt;class 'int'&gt;  (whole number)</span>
+<span class="fn">print</span>(<span class="fn">type</span>(gpa))           <span class="cm"># &lt;class 'float'&gt; (decimal)</span></code></div>
+
+  <div class="ex">
+    <div class="et">🎓 Classroom Activity — 2 Minutes</div>
+    <p>Ask students to create 3 variables about themselves (name, city, favourite food) and print them in one sentence. First student to share wins! This simple exercise removes the "coding is scary" barrier immediately.</p>
+  </div>
+
+  <h2>Concept 2: Lists — Multiple Items in One Box</h2>
+
+  <div class="co"><span class="cl">Python</span><code><span class="cm"># A list is like a shopping bag — holds multiple items</span>
+exam_scores = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>, <span class="num">95</span>, <span class="num">88</span>]
+
+<span class="cm"># Access by position (starts at 0!)</span>
+<span class="fn">print</span>(exam_scores[<span class="num">0</span>])   <span class="cm"># 85 (first item)</span>
+<span class="fn">print</span>(exam_scores[-<span class="num">1</span>])  <span class="cm"># 88 (last item)</span>
+
+<span class="cm"># Useful built-in functions</span>
+<span class="fn">print</span>(<span class="fn">len</span>(exam_scores))   <span class="cm"># 5 — how many items</span>
+<span class="fn">print</span>(<span class="fn">max</span>(exam_scores))   <span class="cm"># 95 — highest score</span>
+<span class="fn">print</span>(<span class="fn">min</span>(exam_scores))   <span class="cm"># 78 — lowest score</span>
+<span class="fn">print</span>(<span class="fn">sum</span>(exam_scores))   <span class="cm"># 438 — total</span>
+
+<span class="cm"># Calculate average (this is actual data science!)</span>
+average = <span class="fn">sum</span>(exam_scores) / <span class="fn">len</span>(exam_scores)
+<span class="fn">print</span>(<span class="str">f"Class average: {average}"</span>)  <span class="cm"># 87.6</span></code></div>
+
+  <h2>Concept 3: If-Else — Decision Making</h2>
+
+  <div class="co"><span class="cl">Python</span><code><span class="cm"># Python can make decisions — just like we do</span>
+score = <span class="num">72</span>
+
+<span class="kw">if</span> score >= <span class="num">90</span>:
+    <span class="fn">print</span>(<span class="str">"Grade: A — Excellent!"</span>)
+<span class="kw">elif</span> score >= <span class="num">75</span>:
+    <span class="fn">print</span>(<span class="str">"Grade: B — Good job!"</span>)
+<span class="kw">elif</span> score >= <span class="num">60</span>:
+    <span class="fn">print</span>(<span class="str">"Grade: C — Keep improving"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Grade: F — Please study more"</span>)
+
+<span class="cm"># Output: Grade: C — Keep improving</span></code></div>
+
+  <h2>Concept 4: For Loop — Do Something Repeatedly</h2>
+
+  <div class="co"><span class="cl">Python</span><code><span class="cm"># A loop does a task multiple times automatically</span>
+students = [<span class="str">"Arjun"</span>, <span class="str">"Meera"</span>, <span class="str">"Rahul"</span>, <span class="str">"Divya"</span>]
+
+<span class="kw">for</span> student <span class="kw">in</span> students:
+    <span class="fn">print</span>(<span class="str">f"Welcome to DS class, {student}!"</span>)
+
+<span class="cm"># Output:</span>
+<span class="cm"># Welcome to DS class, Arjun!</span>
+<span class="cm"># Welcome to DS class, Meera!</span>
+<span class="cm"># Welcome to DS class, Rahul!</span>
+<span class="cm"># Welcome to DS class, Divya!</span>
+
+<span class="cm"># Real DS use: loop through scores and grade each one</span>
+scores = [<span class="num">85</span>, <span class="num">62</span>, <span class="num">91</span>, <span class="num">74</span>]
+<span class="kw">for</span> s <span class="kw">in</span> scores:
+    grade = <span class="str">"Pass"</span> <span class="kw">if</span> s >= <span class="num">70</span> <span class="kw">else</span> <span class="str">"Fail"</span>
+    <span class="fn">print</span>(<span class="str">f"Score {s}: {grade}"</span>)</code></div>
+
+  <h2>Mini Data Science Project — 5 Lines of Code</h2>
+  <p>Show students they can do <em>real</em> data analysis with what they just learned:</p>
+
+  <div class="co"><span class="cl">Python — Your First Data Analysis!</span><code><span class="cm"># A mini data science project with just basic Python</span>
+monthly_sales = [<span class="num">45000</span>, <span class="num">52000</span>, <span class="num">48000</span>, <span class="num">61000</span>,
+                 <span class="num">55000</span>, <span class="num">70000</span>, <span class="num">49000</span>, <span class="num">67000</span>,
+                 <span class="num">72000</span>, <span class="num">58000</span>, <span class="num">63000</span>, <span class="num">80000</span>]
+
+total_revenue  = <span class="fn">sum</span>(monthly_sales)
+average_sales  = total_revenue / <span class="fn">len</span>(monthly_sales)
+best_month     = <span class="fn">max</span>(monthly_sales)
+worst_month    = <span class="fn">min</span>(monthly_sales)
+
+<span class="fn">print</span>(<span class="str">f"Total Revenue:   ₹{total_revenue:,}"</span>)
+<span class="fn">print</span>(<span class="str">f"Monthly Average: ₹{average_sales:,.0f}"</span>)
+<span class="fn">print</span>(<span class="str">f"Best Month:      ₹{best_month:,}"</span>)
+<span class="fn">print</span>(<span class="str">f"Worst Month:     ₹{worst_month:,}"</span>)
+
+<span class="cm"># This is EXACTLY what data analysts do every day!</span></code></div>
+
+  <div class="cd ok">
+    <span class="tg gn">Instructor Moment</span>
+    <p>After running this, tell students: "Congratulations. You just performed a business data analysis. A company pays analysts to do exactly this — but on thousands of rows, with charts. That's where we're going. The foundation is what you just built."</p>
+  </div>
+
+  <h2>Common Beginner Mistakes (Normalize Them!)</h2>
+  <table class="tb">
+    <tr><th>Mistake</th><th>Example</th><th>Fix</th></tr>
+    <tr><td>Wrong indentation</td><td><code>if x &gt; 5:<br>print("yes")</code> (no space)</td><td>Add 4 spaces before print</td></tr>
+    <tr><td>Missing colon</td><td><code>if x &gt; 5</code> (no colon)</td><td>Always add : after if, for, def</td></tr>
+    <tr><td>Wrong quotes</td><td>Using smart quotes " " instead of " "</td><td>Only use straight quotes in code</td></tr>
+    <tr><td>NameError</td><td>Using a variable before creating it</td><td>Create the variable first, use it second</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PAGE 5: QUIZ + WRAP-UP -->
+<!-- ================================================================ -->
+<div class="page" id="page-5">
+<div class="pg">
+  <div class="hero">
+    <div class="hero-label">Module 5 — 52 to 60 Minutes</div>
+    <h1>Quick Quiz + What Comes Next</h1>
+    <p class="hero-sub">Lock in learning with 5 quick questions. Then set expectations for upcoming sessions and assign a meaningful take-home task.</p>
+  </div>
+
+  <h2>5-Minute Quiz</h2>
+
+  <div class="qz" id="q1">
+    <div class="qt">Q1: An AI confidently says "The Eiffel Tower is in London." What is this called?</div>
+    <div class="qo" onclick="chk('q1',this,false)">A) A feature</div>
+    <div class="qo" onclick="chk('q1',this,true)">B) Hallucination — AI generating wrong info confidently</div>
+    <div class="qo" onclick="chk('q1',this,false)">C) A bug in the programming</div>
+    <div class="qo" onclick="chk('q1',this,false)">D) Normal AI behaviour</div>
+    <div class="qf" id="q1f"></div>
+  </div>
+
+  <div class="qz" id="q2">
+    <div class="qt">Q2: Which prompt is BETTER for getting a useful response?</div>
+    <div class="qo" onclick="chk('q2',this,false)">A) "Tell me about Python"</div>
+    <div class="qo" onclick="chk('q2',this,true)">B) "You are a Python teacher. Explain what a list is to a complete beginner in 3 bullet points with one example."</div>
+    <div class="qo" onclick="chk('q2',this,false)">C) "Python list explain pls"</div>
+    <div class="qo" onclick="chk('q2',this,false)">D) Both A and B are equally good</div>
+    <div class="qf" id="q2f"></div>
+  </div>
+
+  <div class="qz" id="q3">
+    <div class="qt">Q3: What does this Python code output?<br><code style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:12px;">scores = [80, 90, 70]; print(max(scores))</code></div>
+    <div class="qo" onclick="chk('q3',this,false)">A) 80</div>
+    <div class="qo" onclick="chk('q3',this,true)">B) 90</div>
+    <div class="qo" onclick="chk('q3',this,false)">C) 70</div>
+    <div class="qo" onclick="chk('q3',this,false)">D) Error</div>
+    <div class="qf" id="q3f"></div>
+  </div>
+
+  <div class="qz" id="q4">
+    <div class="qt">Q4: What does the "R" stand for in the CRISP prompting framework?</div>
+    <div class="qo" onclick="chk('q4',this,false)">A) Request</div>
+    <div class="qo" onclick="chk('q4',this,true)">B) Role — telling the AI who/what persona to be</div>
+    <div class="qo" onclick="chk('q4',this,false)">C) Response</div>
+    <div class="qo" onclick="chk('q4',this,false)">D) Requirement</div>
+    <div class="qf" id="q4f"></div>
+  </div>
+
+  <div class="qz" id="q5">
+    <div class="qt">Q5: In Python, what does <code style="color:var(--teal);font-family:'JetBrains Mono',monospace;">scores[0]</code> return if <code style="color:var(--teal);font-family:'JetBrains Mono',monospace;">scores = [10, 20, 30]</code>?</div>
+    <div class="qo" onclick="chk('q5',this,true)">A) 10 — Python lists start at index 0</div>
+    <div class="qo" onclick="chk('q5',this,false)">B) 20 — second element</div>
+    <div class="qo" onclick="chk('q5',this,false)">C) 30 — last element</div>
+    <div class="qo" onclick="chk('q5',this,false)">D) Error — 0 is not valid</div>
+    <div class="qf" id="q5f"></div>
+  </div>
+
+  <h2>Take-Home Assignment</h2>
+  <div class="cd ok">
+    <span class="tg gn">Assignment — Due Next Session</span>
+    <ol class="st">
+      <li><strong>Prompt Practice (15 min):</strong> Open ChatGPT or Claude (free). Write 3 prompts using the CRISP framework for a topic you care about (e.g., fitness, cooking, career). Screenshot the best response.</li>
+      <li><strong>Python Practice (20 min):</strong> In Jupyter, create a list of 5 cities in India, find the one with the most letters using <code>max(cities, key=len)</code>, and print a message about it.</li>
+      <li><strong>Exploration (10 min):</strong> Ask an AI: "I am learning Data Science. What should I focus on this week as a beginner?" Share the prompt and response in the next class.</li>
+    </ol>
+  </div>
+
+  <h2>Session Roadmap — Where We're Going</h2>
+  <table class="tb">
+    <tr><th>Session</th><th>Topics</th><th>You'll Be Able To</th></tr>
+    <tr><td><strong>Session 1–2 ✓</strong></td><td>Overview, Tools, Python Basics, Prompting</td><td>Run code, prompt AI effectively</td></tr>
+    <tr><td><strong>Session 3–4</strong></td><td>Python Deep Dive: Functions, Pandas, NumPy</td><td>Load and manipulate real datasets</td></tr>
+    <tr><td><strong>Session 5–6</strong></td><td>Data Visualization: Matplotlib, Seaborn, Power BI</td><td>Make charts and dashboards</td></tr>
+    <tr><td><strong>Session 7–8</strong></td><td>SQL Basics + MySQL</td><td>Query databases like a data analyst</td></tr>
+    <tr><td><strong>Session 9–11</strong></td><td>Machine Learning: Regression, Classification</td><td>Build your first prediction model</td></tr>
+    <tr><td><strong>Session 12–14</strong></td><td>Capstone Project</td><td>Portfolio-ready project for your resume</td></tr>
+  </table>
+
+  <h2>Key Takeaways from Today</h2>
+  <div class="g3">
+    <div class="cd hl" style="margin:0;text-align:center;padding:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">🧠</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px;">AI = Pattern Matching</div>
+      <div style="font-size:12px;color:var(--muted);">Trained on billions of examples, not "thinking"</div>
+    </div>
+    <div class="cd purp" style="margin:0;text-align:center;padding:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">💬</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Prompting = Power</div>
+      <div style="font-size:12px;color:var(--muted);">Specific + Role + Format = Professional output</div>
+    </div>
+    <div class="cd ok" style="margin:0;text-align:center;padding:16px;">
+      <div style="font-size:28px;margin-bottom:8px;">🐍</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Python = English for Computers</div>
+      <div style="font-size:12px;color:var(--muted);">Variables, lists, loops — now you code</div>
+    </div>
+  </div>
+
+  <div class="cd warn" style="margin-top:20px;">
+    <span class="tg yl">Final Words for Instructor</span>
+    <p>End the session by having every student type one thing they want to build using Data Science or AI — and save it. Revisit this list on the final session. The moment they see their original dream becoming real code is the most powerful moment in any beginner program.</p>
+  </div>
+</div>
+</div>
+
+<!-- ================================================================ -->
+<!-- PAGE 6: INSTRUCTOR NOTES -->
+<!-- ================================================================ -->
+<div class="page" id="page-6">
+<div class="pg">
+  <div class="hero">
+    <div class="hero-label">Instructor Resource</div>
+    <h1>Teaching Notes &<br>Common Questions</h1>
+    <p class="hero-sub">Practical guidance for delivering this session effectively to career switchers and college freshers. Includes anticipated questions and ready-made answers.</p>
+  </div>
+
+  <h2>Audience-Specific Advice</h2>
+  <div class="g2">
+    <div class="cd hl">
+      <span class="tg bl">Career Switchers</span>
+      <ul style="padding-left:16px;">
+        <li>Biggest fear: "Am I too old / too late?"</li>
+        <li>Reassure: Many top DS hires are career switchers — domain expertise (finance, healthcare, marketing) + DS skills = very valuable combo</li>
+        <li>Anchor to: Prompt Engineering is usable TODAY, before they finish the course</li>
+        <li>Show salary data: ₹8–18 LPA for entry-level DS roles in India (2024)</li>
+      </ul>
+    </div>
+    <div class="cd info">
+      <span class="tg sk">College Freshers</span>
+      <ul style="padding-left:16px;">
+        <li>Biggest fear: "My college didn't teach this — am I behind?"</li>
+        <li>Reassure: Everyone in this class is starting from the same point</li>
+        <li>Anchor to: Building a GitHub + project portfolio differentiates from 90% of applicants</li>
+        <li>Show: Even a 3-month head-start in DS beats 4 years of CS theory with no projects</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Top 10 Questions Students Will Ask</h2>
+  <table class="tb">
+    <tr><th>#</th><th>Question</th><th>Best Answer</th></tr>
+    <tr><td>1</td><td>"Do I need to be good at math?"</td><td>Basic statistics (mean, percentage) is enough to start. Advanced math comes later, and tools handle most of it.</td></tr>
+    <tr><td>2</td><td>"Python or R — which should I learn?"</td><td>Python. It's industry standard, used for both data science AND general programming. R is niche (academic).</td></tr>
+    <tr><td>3</td><td>"Will AI replace data scientists?"</td><td>AI replaces repetitive tasks, not human judgment. DS/AI engineers who can use AI tools are MORE in demand, not less.</td></tr>
+    <tr><td>4</td><td>"How long to get a job?"</td><td>6-9 months of focused learning + 2-3 good projects typically gets interviews. Quality over speed.</td></tr>
+    <tr><td>5</td><td>"Is ChatGPT the same as Data Science?"</td><td>ChatGPT is ONE AI product. DS is the field of building such tools AND using data for decisions. Much broader.</td></tr>
+    <tr><td>6</td><td>"What salary can I expect?"</td><td>Entry level in India: ₹5-12 LPA. With 2+ years: ₹12-25 LPA. Senior/specialized: ₹30 LPA+</td></tr>
+    <tr><td>7</td><td>"Do I need to memorize code?"</td><td>No! Professional developers Google and use AI assistance constantly. Understanding logic matters more than memorizing syntax.</td></tr>
+    <tr><td>8</td><td>"Mac or Windows?"</td><td>Either works. Most companies use Linux servers, but you'll learn on Mac/Windows. Focus on learning, not hardware.</td></tr>
+    <tr><td>9</td><td>"What if I get stuck?"</td><td>That's normal! Stack Overflow, ChatGPT, and the course community are your resources. Getting stuck is how you learn.</td></tr>
+    <tr><td>10</td><td>"Is Python hard?"</td><td>Python is designed to be readable. The first week feels hard because it's new. By week 3, most students are surprised how natural it feels.</td></tr>
+  </table>
+
+  <h2>Energy Management Tips</h2>
+  <div class="g2">
+    <div class="cd ok">
+      <span class="tg gn">Keep Energy High</span>
+      <ul style="padding-left:16px;">
+        <li>Do a live demo with real company data (Zomato, Flipkart, IPL stats)</li>
+        <li>Ask students to shout out industries they're from — show DS use cases for each</li>
+        <li>Celebrate every "working code" moment loudly</li>
+        <li>Use pair programming for exercises — more social, less intimidating</li>
+      </ul>
+    </div>
+    <div class="cd coral">
+      <span class="tg" style="background:rgba(248,113,113,.12);color:var(--coral);">Common Mistakes to Avoid</span>
+      <ul style="padding-left:16px;">
+        <li>Don't rush through Python — 4 concepts done well beats 10 concepts rushed</li>
+        <li>Don't skip the "why" — always explain WHY before HOW</li>
+        <li>Don't let setup issues dominate — have a backup "use Google Colab" plan</li>
+        <li>Don't use jargon without defining it — assume every term is new</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Google Colab Backup Plan</h2>
+  <div class="cd warn">
+    <span class="tg yl">If Jupyter Fails for a Student</span>
+    <p>Have them open <strong>colab.google.com</strong> in any browser — no installation needed. Google Colab is a free, cloud-based Jupyter environment. Sign in with Google account → New Notebook → ready in 30 seconds. Works perfectly for all examples in this session.</p>
+    <p>This also means students can practice from home on any device, including mobile (basic use).</p>
+  </div>
+
+  <h2>Session 2 Success Metrics</h2>
+  <p>How do you know this session succeeded? By the end, every student should be able to:</p>
+  <div class="bds">
+    <div class="bd" style="border-color:var(--green);"><div class="v">✓</div><div class="l">Open Jupyter & run a cell</div></div>
+    <div class="bd" style="border-color:var(--teal);"><div class="v">✓</div><div class="l">Explain AI hallucination</div></div>
+    <div class="bd" style="border-color:var(--accent);"><div class="v">✓</div><div class="l">Write a CRISP prompt</div></div>
+    <div class="bd" style="border-color:var(--gold);"><div class="v">✓</div><div class="l">Create a Python list</div></div>
+    <div class="bd" style="border-color:var(--purple);"><div class="v">✓</div><div class="l">Feel excited, not scared</div></div>
+  </div>
+</div>
+</div>
+
+</div><!-- pages-wrap -->
+<div class="prog" id="prog"></div>
+
+<script>
+const sections=[
+  {n:"Session Guide",t:"Overview"},
+  {n:"Installation",t:"0–8 min"},
+  {n:"How AI Works",t:"8–20 min"},
+  {n:"Prompt Engineering",t:"20–40 min"},
+  {n:"Python Basics",t:"40–52 min"},
+  {n:"Quiz & Wrap-Up",t:"52–60 min"},
+  {n:"Instructor Notes",t:"Reference"}
+];
+const navTabs=document.getElementById('navTabs');
+const pages=document.querySelectorAll('.page');
+let cur=0;
+sections.forEach((s,i)=>{
+  const t=document.createElement('div');
+  t.className='nav-tab'+(i===0?' active':'');
+  t.innerHTML=s.n+`<span class="min">${s.t}</span>`;
+  t.addEventListener('click',()=>go(i));
+  navTabs.appendChild(t);
+});
+function go(i){
+  pages[cur].classList.remove('active');
+  document.querySelectorAll('.nav-tab')[cur].classList.remove('active');
+  cur=i;
+  pages[cur].classList.add('active');
+  document.querySelectorAll('.nav-tab')[cur].classList.add('active');
+  pages[cur].scrollTop=0;
+  document.querySelectorAll('.nav-tab')[cur].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  up();
+}
+function up(){
+  const p=pages[cur];
+  const pct=p.scrollHeight<=p.clientHeight?100:(p.scrollTop/(p.scrollHeight-p.clientHeight))*100;
+  document.getElementById('prog').style.width=pct+'%';
+}
+pages.forEach(p=>p.addEventListener('scroll',up));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&cur<sections.length-1)go(cur+1);
+  if(e.key==='ArrowLeft'&&cur>0)go(cur-1);
+});
+pages[0].classList.add('active');up();
+
+const fb={
+  q1:{r:"Correct! Hallucination is when AI generates false information confidently. It's a known limitation — always verify important AI outputs from a reliable source.",w:"When AI confidently states false information, it's called Hallucination. This is a key limitation to understand — AI is a pattern matcher, not a fact-checker."},
+  q2:{r:"Correct! Option B uses Role (Python teacher), Audience (complete beginner), Format (3 bullet points), and Example request. The specifics dramatically improve quality.",w:"Option B is far better — it assigns a role, defines the audience, specifies format, and requests an example. Vague prompts get vague answers."},
+  q3:{r:"Correct! max() returns the largest value in the list. [80, 90, 70] — the maximum is 90.",w:"max(scores) returns the largest number in the list. In [80, 90, 70], that's 90. Remember: max for biggest, min for smallest."},
+  q4:{r:"Correct! R = Role. Telling AI to be a 'friendly teacher', 'experienced doctor', or 'senior developer' dramatically shapes the tone and depth of its response.",w:"R stands for Role in CRISP. Assigning a role (like 'You are an expert data analyst') is one of the most powerful prompting techniques."},
+  q5:{r:"Correct! Python uses zero-based indexing. The first item is at index 0. So scores[0] = 10, scores[1] = 20, scores[2] = 30. This trips up beginners often!",w:"Python lists start at index 0, not 1. So scores[0] is the first item, which is 10. This '0-indexing' is used in most programming languages."}
+};
+function chk(id,el,ok){
+  const c=document.getElementById(id);
+  if(c.classList.contains('done'))return;
+  c.classList.add('done');
+  const f=document.getElementById(id+'f');
+  if(ok){el.classList.add('ok');f.className='qf show r';f.textContent=fb[id].r;}
+  else{el.classList.add('no');f.className='qf show w';f.textContent=fb[id].w;}
+}
+</script>
+</body>
+</html>

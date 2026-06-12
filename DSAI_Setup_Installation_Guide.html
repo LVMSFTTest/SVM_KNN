@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DS & AI — Complete Setup & Installation Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080f1e;--card:#0f1a2e;--alt:#162236;--code:#060b14;
+    --accent:#6366f1;--glow:rgba(99,102,241,.10);
+    --teal:#2dd4bf;--purple:#a78bfa;--gold:#fbbf24;--coral:#f87171;
+    --green:#34d399;--orange:#fb923c;--sky:#60a5fa;--pink:#f472b6;
+    --text:#e2e8f0;--muted:#8899aa;--dim:#3d5166;--border:#1a2a3e;
+    --excel:#217346;--python:#3776ab;--anaconda:#44a833;--git:#f05032;
+    --mysql:#4479a1;--pbi:#f2c811;--tableau:#e97627;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+
+  /* NAV */
+  .top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,15,30,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+  .nav-brand{display:flex;align-items:center;gap:10px;padding:9px 18px 0;}
+  .nav-icon{width:26px;height:26px;border-radius:7px;background:var(--glow);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .nav-title{font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:var(--accent);}
+  .nav-sub{margin-left:auto;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.3px;}
+  .nav-tabs{display:flex;overflow-x:auto;padding:5px 10px;gap:3px;scrollbar-width:none;}
+  .nav-tabs::-webkit-scrollbar{display:none;}
+  .nav-tab{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .25s;border:1px solid transparent;white-space:nowrap;}
+  .nav-tab:hover{color:var(--text);background:var(--card);}
+  .nav-tab.active{color:#fff;background:var(--accent);border-color:var(--accent);}
+  .nav-tab .tab-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  /* PAGES */
+  .pages-wrap{margin-top:84px;height:calc(100vh - 84px);overflow:hidden;}
+  .page{display:none;height:100%;overflow-y:auto;padding:26px 18px 70px;}
+  .page.active{display:block;}
+  .pg{max-width:860px;margin:0 auto;}
+
+  /* HERO */
+  .hero{border-radius:16px;padding:26px 26px 20px;margin-bottom:24px;position:relative;overflow:hidden;}
+  .hero-label{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;}
+  .hero h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;line-height:1.2;margin-bottom:7px;}
+  .hero-sub{font-size:14px;color:var(--muted);line-height:1.65;}
+  .hero-badges{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .hbadge{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:6px;display:flex;align-items:center;gap:5px;}
+
+  /* TYPO */
+  h2{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;margin:30px 0 12px;}
+  h3{font-size:15.5px;font-weight:700;margin:18px 0 7px;}
+  p,li{font-size:13.5px;line-height:1.75;margin-bottom:7px;}
+  a{color:var(--sky);text-decoration:none;}a:hover{text-decoration:underline;}
+
+  /* CARD */
+  .cd{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;margin:12px 0;}
+  .cd.ok{border-left:3px solid var(--green);}
+  .cd.warn{border-left:3px solid var(--gold);}
+  .cd.err{border-left:3px solid var(--coral);}
+  .cd.info{border-left:3px solid var(--sky);}
+  .cd.hl{border-left:3px solid var(--accent);}
+  .cd.purp{border-left:3px solid var(--purple);}
+
+  /* TAG */
+  .tg{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-bottom:7px;}
+  .gn{background:rgba(52,211,153,.12);color:var(--green);}
+  .yl{background:rgba(251,191,36,.12);color:var(--gold);}
+  .rd{background:rgba(248,113,113,.12);color:var(--coral);}
+  .sk{background:rgba(96,165,250,.12);color:var(--sky);}
+  .bl{background:rgba(99,102,241,.12);color:var(--accent);}
+  .pp{background:rgba(167,139,250,.12);color:var(--purple);}
+  .te{background:rgba(45,212,191,.12);color:var(--teal);}
+  .or{background:rgba(251,146,60,.12);color:var(--orange);}
+
+  /* CODE / TERMINAL */
+  .co{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin:10px 0;overflow-x:auto;position:relative;}
+  .co code{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);}
+  .cl{position:absolute;top:5px;right:9px;font-size:8.5px;font-weight:700;letter-spacing:1px;color:var(--dim);text-transform:uppercase;}
+  .kw{color:#c792ea;}.fn{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#546e7a;}.num{color:#f78c6c;}
+  .ok-line{color:var(--green);}
+  .err-line{color:var(--coral);}
+
+  /* STEPS */
+  .steps{list-style:none;padding:0;counter-reset:sc;}
+  .steps li{counter-increment:sc;padding:13px 13px 13px 50px;position:relative;margin-bottom:8px;border-radius:11px;background:var(--card);border:1px solid var(--border);transition:border-color .2s;}
+  .steps li:hover{border-color:rgba(99,102,241,.2);}
+  .steps li::before{content:counter(sc);position:absolute;left:12px;top:13px;width:24px;height:24px;background:var(--glow);border:1px solid rgba(99,102,241,.2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);}
+  .steps li strong{display:block;font-size:13.5px;margin-bottom:3px;}
+  .steps li span{font-size:12.5px;color:var(--muted);}
+
+  /* SCREENSHOT PLACEHOLDER */
+  .ss{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:0;margin:10px 0;overflow:hidden;}
+  .ss-bar{background:var(--alt);padding:8px 12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);}
+  .ss-dot{width:9px;height:9px;border-radius:50%;}
+  .ss-title{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-left:6px;}
+  .ss-body{padding:16px;min-height:90px;}
+  .ss-body p{font-size:12px;color:var(--muted);text-align:center;margin-top:20px;}
+
+  /* VISUAL STEP */
+  .vstep{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:11px;margin:7px 0;}
+  .vstep-num{flex-shrink:0;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;}
+  .vstep-body strong{font-size:13.5px;display:block;margin-bottom:3px;}
+  .vstep-body p{font-size:12.5px;color:var(--muted);margin:0;}
+  .vstep-body .highlight{color:var(--gold);font-weight:700;}
+  .vstep-body .cmd{font-family:'JetBrains Mono',monospace;background:var(--code);border:1px solid var(--border);border-radius:5px;padding:2px 7px;font-size:11.5px;color:var(--teal);}
+
+  /* TABLE */
+  .tb{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px;}
+  .tb th{background:var(--alt);color:var(--accent);padding:8px 10px;text-align:left;font-weight:700;font-size:11px;letter-spacing:.3px;border-bottom:2px solid var(--border);}
+  .tb td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .tb tr:hover td{background:rgba(99,102,241,.025);}
+
+  /* GRID */
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:11px 0;}
+  .gc{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px;}
+  .gc h4{font-size:12.5px;font-weight:700;margin-bottom:6px;}
+
+  /* VERIFY BOX */
+  .verify{background:linear-gradient(135deg,rgba(52,211,153,.05),rgba(45,212,191,.03));border:1px solid rgba(52,211,153,.2);border-radius:12px;padding:16px;margin:12px 0;}
+  .verify .vt{font-size:13px;font-weight:700;color:var(--green);margin-bottom:9px;display:flex;align-items:center;gap:6px;}
+
+  /* INFO BOX */
+  .ibox{background:linear-gradient(135deg,rgba(96,165,250,.05),rgba(99,102,241,.03));border:1px solid rgba(96,165,250,.18);border-radius:12px;padding:15px;margin:12px 0;}
+
+  /* WARNING CALLOUT */
+  .wcall{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:12.5px;}
+  .wcall strong{color:var(--gold);}
+
+  /* TOOL HEADER */
+  .tool-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+  .tool-logo{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+  .tool-info h2{margin:0 0 4px;font-size:22px;}
+  .tool-info p{margin:0;font-size:12.5px;color:var(--muted);}
+  .tool-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+  .tmeta{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;}
+
+  /* PROGRESS BAR */
+  .prog{position:fixed;bottom:0;left:0;height:3px;background:var(--accent);transition:width .15s;z-index:100;}
+
+  /* OS TABS */
+  .ostabs{display:flex;gap:4px;margin:10px 0 4px;}
+  .ostab{padding:5px 14px;border-radius:7px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .2s;}
+  .ostab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .os-content{display:none;}.os-content.active{display:block;}
+
+  @media(max-width:700px){
+    h2{font-size:18px;}.hero h1{font-size:22px;}
+    .g2{grid-template-columns:1fr;}
+    .page{padding:16px 12px 60px;}
+    .tool-header{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-brand">
+    <div class="nav-icon">⚙️</div>
+    <div class="nav-title">DS & AI — Complete Setup Guide</div>
+    <div class="nav-sub">7 Tools · Step-by-Step</div>
+  </div>
+  <div class="nav-tabs" id="navTabs"></div>
+</nav>
+
+<div class="pages-wrap">
+
+<!-- ============================================================ PAGE 0: OVERVIEW -->
+<div class="page" id="page-0">
+<div class="pg">
+
+  <div class="hero" style="background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(45,212,191,.05));border:1px solid rgba(99,102,241,.18);">
+    <div class="hero-label" style="color:var(--accent);">System & Software Setup</div>
+    <h1>Install Everything Right,<br>First Time</h1>
+    <p class="hero-sub">Complete step-by-step installation guide for all 7 tools required in this DS & AI course. Follow the order shown — each tool builds on the previous one.</p>
+    <div class="hero-badges">
+      <div class="hbadge" style="background:rgba(33,115,70,.15);color:#6fcf97;">🟢 Microsoft Excel</div>
+      <div class="hbadge" style="background:rgba(55,118,171,.15);color:#56adf5;">🐍 Python</div>
+      <div class="hbadge" style="background:rgba(68,168,51,.15);color:#7dd87a;">🅰️ Anaconda</div>
+      <div class="hbadge" style="background:rgba(240,80,50,.15);color:#f97060;">🔀 Git & GitHub</div>
+      <div class="hbadge" style="background:rgba(68,121,161,.15);color:#60a5fa;">🗄️ MySQL</div>
+      <div class="hbadge" style="background:rgba(242,200,17,.15);color:#fbbf24;">📊 Power BI</div>
+      <div class="hbadge" style="background:rgba(233,118,39,.15);color:#fdba74;">📈 Tableau</div>
+    </div>
+  </div>
+
+  <h2 style="color:var(--sky);">System Requirements — Check First</h2>
+  <div class="cd warn">
+    <span class="tg yl">Minimum Requirements</span>
+    <div class="g2">
+      <div>
+        <p style="font-size:12.5px;"><strong>RAM:</strong> 4 GB minimum &nbsp;|&nbsp; <strong>Recommended:</strong> 8 GB or more</p>
+        <p style="font-size:12.5px;"><strong>Storage:</strong> 250 GB free space minimum</p>
+        <p style="font-size:12.5px;"><strong>OS:</strong> Windows 10/11, macOS 11+, or Ubuntu 20+</p>
+        <p style="font-size:12.5px;"><strong>Internet:</strong> Required for downloads (1–5 GB total)</p>
+      </div>
+      <div>
+        <p style="font-size:12.5px;"><strong>Processor:</strong> Intel Core i3 / AMD Ryzen 3 minimum</p>
+        <p style="font-size:12.5px;"><strong>Display:</strong> 1280×720 or higher</p>
+        <p style="font-size:12.5px;"><strong>Browser:</strong> Chrome or Edge (latest)</p>
+        <p style="font-size:12.5px;"><strong>Admin rights:</strong> Required for all installations</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="color:var(--sky);">Recommended Installation Order</h2>
+  <p>Install in this exact order. Anaconda installs Python automatically, so install Anaconda before trying to verify Python separately.</p>
+
+  <table class="tb">
+    <tr><th>#</th><th>Tool</th><th>Purpose in Course</th><th>Cost</th><th>Time to Install</th></tr>
+    <tr><td><strong>1</strong></td><td>🟢 <strong>Microsoft Excel</strong></td><td>Data cleaning, basic analysis, pivot tables</td><td>Paid / Free (web)</td><td>10–15 min</td></tr>
+    <tr><td><strong>2</strong></td><td>🅰️ <strong>Anaconda</strong></td><td>Installs Python + Jupyter + 250 DS libraries at once</td><td>Free</td><td>10–20 min</td></tr>
+    <tr><td><strong>3</strong></td><td>🐍 <strong>Python (via Anaconda)</strong></td><td>Data analysis, machine learning, automation</td><td>Free</td><td>Included above</td></tr>
+    <tr><td><strong>4</strong></td><td>🔀 <strong>Git & GitHub</strong></td><td>Version control, code backup, portfolio</td><td>Free</td><td>5–10 min</td></tr>
+    <tr><td><strong>5</strong></td><td>🗄️ <strong>MySQL</strong></td><td>Database queries and SQL practice</td><td>Free</td><td>15–20 min</td></tr>
+    <tr><td><strong>6</strong></td><td>📊 <strong>Power BI Desktop</strong></td><td>Interactive dashboards and reports</td><td>Free</td><td>5–10 min</td></tr>
+    <tr><td><strong>7</strong></td><td>📈 <strong>Tableau Desktop</strong></td><td>Advanced data visualisation</td><td>Free trial / Student</td><td>10–15 min</td></tr>
+  </table>
+
+  <div class="ibox">
+    <p style="font-size:12.5px;margin:0;"><strong style="color:var(--sky);">💡 Slow internet?</strong> Download all installers first before class. Anaconda (~800 MB), MySQL (~500 MB), Tableau (~1 GB) are the largest. Keep installers on a USB drive for offline class setup.</p>
+  </div>
+
+  <h2 style="color:var(--sky);">Quick Navigation</h2>
+  <p>Use the tabs above to jump to any tool's installation guide. Each tab has:</p>
+  <ul style="padding-left:18px;">
+    <li>What the tool is and why we use it</li>
+    <li>Numbered steps with what to click/select at each screen</li>
+    <li>Screenshots of key screens to look for</li>
+    <li>Verification commands to confirm successful installation</li>
+    <li>Common errors and exact fixes</li>
+  </ul>
+</div>
+</div>
+
+<!-- ============================================================ PAGE 1: EXCEL -->
+<div class="page" id="page-1">
+<div class="pg">
+
+  <div class="tool-header">
+    <div class="tool-logo" style="background:rgba(33,115,70,.15);">🟢</div>
+    <div class="tool-info">
+      <h2 style="color:#6fcf97;margin:0 0 3px;">Microsoft Excel</h2>
+      <p>Spreadsheet software for data organisation, cleaning, and basic analysis</p>
+      <div class="tool-meta">
+        <span class="tmeta" style="background:rgba(251,191,36,.12);color:var(--gold);">Paid / Free Web Version</span>
+        <span class="tmeta" style="background:rgba(52,211,153,.12);color:var(--green);">Windows & Mac</span>
+        <span class="tmeta" style="background:rgba(99,102,241,.12);color:var(--accent);">10–15 min install</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd info">
+    <span class="tg sk">Why Excel in a DS Course?</span>
+    <p>Excel is where most business data lives — CSV files, reports, dashboards. As a data scientist, you'll constantly receive data in Excel format and deliver results in it. It's also the fastest way to do quick data exploration without writing code.</p>
+  </div>
+
+  <h2 style="color:#6fcf97;">Option A — Paid: Microsoft Office / Microsoft 365</h2>
+  <p>Best option if you want the full desktop app. Microsoft 365 is subscription-based but includes Word, PowerPoint, Teams, and 1 TB OneDrive.</p>
+
+  <ol class="steps">
+    <li>
+      <strong>Go to the official Microsoft website</strong>
+      <span>Open your browser and visit <a href="https://www.microsoft.com/en-in/microsoft-365" target="_blank">microsoft.com/microsoft-365</a>. Look for "Buy now" or "Try free for 1 month."</span>
+    </li>
+    <li>
+      <strong>Choose your plan</strong>
+      <span><strong>Microsoft 365 Personal</strong> — ₹4,899/year (1 user, 5 devices). <strong>Microsoft 365 Family</strong> — ₹6,899/year (up to 6 users). <strong>Home & Student 2024</strong> — ₹8,499 one-time (no subscription).</span>
+    </li>
+    <li>
+      <strong>Sign in or create a Microsoft account</strong>
+      <span>You'll need a Microsoft account (free to create). Use your email address to register. This account is also used for OneDrive and other Microsoft services.</span>
+    </li>
+    <li>
+      <strong>Complete purchase and go to My Account</strong>
+      <span>After payment, visit <a href="https://account.microsoft.com" target="_blank">account.microsoft.com</a> → click <strong>"Install Office"</strong> → click <strong>"Install"</strong> button.</span>
+    </li>
+    <li>
+      <strong>Run the downloaded installer</strong>
+      <span>Open the downloaded file (named <strong>OfficeSetup.exe</strong> on Windows). Click <strong>Yes</strong> when Windows asks for permission. The installer runs automatically — stay connected to the internet.</span>
+    </li>
+    <li>
+      <strong>Wait for installation to complete</strong>
+      <span>Takes 10–20 minutes depending on internet speed. You'll see a progress bar. Do not close your laptop or disconnect internet during this step.</span>
+    </li>
+    <li>
+      <strong>Sign in to activate</strong>
+      <span>Open Excel from Start menu. Sign in with your Microsoft account when prompted. This activates your licence. You're done!</span>
+    </li>
+  </ol>
+
+  <h2 style="color:#6fcf97;">Option B — Free: Microsoft Excel Online</h2>
+  <div class="cd ok">
+    <span class="tg gn">100% Free — No Installation Needed</span>
+    <p>If you don't want to pay, use <strong>Excel for the web</strong>. It has 90% of the features needed for this course.</p>
+    <ol class="steps" style="margin-top:10px;">
+      <li><strong>Visit</strong> <a href="https://office.com" target="_blank">office.com</a> → Sign in with a free Microsoft account (or create one)</li>
+      <li><strong>Click Excel</strong> from the app list on the left sidebar</li>
+      <li><strong>Start working</strong> — create new workbooks or upload existing .xlsx files directly in browser</li>
+    </ol>
+  </div>
+
+  <div class="verify">
+    <div class="vt">✅ How to Verify Excel is Working</div>
+    <ol style="padding-left:18px;font-size:12.5px;">
+      <li>Open Excel (from Start menu or search bar)</li>
+      <li>Click <strong>New → Blank Workbook</strong></li>
+      <li>In cell A1, type: <code style="color:var(--teal);font-family:'JetBrains Mono',monospace;">=SUM(10,20)</code> and press Enter</li>
+      <li>Cell A1 should show <strong>30</strong></li>
+      <li>If it shows 30 → Excel is installed and working correctly ✅</li>
+    </ol>
+  </div>
+
+  <h2 style="color:#6fcf97;">Common Issues & Fixes</h2>
+  <table class="tb">
+    <tr><th>Problem</th><th>Cause</th><th>Fix</th></tr>
+    <tr><td>"Product activation failed"</td><td>Not signed in or wrong account</td><td>File → Account → Sign In with the account you purchased with</td></tr>
+    <tr><td>Excel not found after install</td><td>Install not complete</td><td>Search "Excel" in Start menu. If not found, re-run OfficeSetup.exe</td></tr>
+    <tr><td>"This file needs a newer version"</td><td>Old Excel version</td><td>Check for updates: File → Account → Update Options → Update Now</td></tr>
+    <tr><td>Online version won't load</td><td>Browser or login issue</td><td>Clear browser cache or use an Incognito window</td></tr>
+  </table>
+
+  <div class="wcall">
+    <strong>⚠️ Note for Mac users:</strong> Download Microsoft 365 for Mac from <a href="https://www.microsoft.com/en-us/microsoft-365/mac/microsoft-365-for-mac" target="_blank">microsoft.com</a>. The Mac version looks slightly different but all course exercises work the same.
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ PAGE 2: ANACONDA + PYTHON -->
+<div class="page" id="page-2">
+<div class="pg">
+
+  <div class="tool-header">
+    <div class="tool-logo" style="background:rgba(68,168,51,.12);">🅰️</div>
+    <div class="tool-info">
+      <h2 style="color:#7dd87a;margin:0 0 3px;">Anaconda + Python</h2>
+      <p>Installs Python, Jupyter Notebook, and 250+ data science libraries in one package</p>
+      <div class="tool-meta">
+        <span class="tmeta" style="background:rgba(52,211,153,.12);color:var(--green);">100% Free</span>
+        <span class="tmeta" style="background:rgba(99,102,241,.12);color:var(--accent);">Windows / Mac / Linux</span>
+        <span class="tmeta" style="background:rgba(251,191,36,.12);color:var(--gold);">~800 MB download</span>
+        <span class="tmeta" style="background:rgba(248,113,113,.12);color:var(--coral);">Install this BEFORE Python alone</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd hl">
+    <span class="tg bl">Why Anaconda Instead of Just Python?</span>
+    <p>Installing Python alone means manually installing every library (pandas, numpy, scikit-learn, matplotlib) one by one. <strong>Anaconda installs Python + all 250 essential DS libraries at once</strong>, plus Jupyter Notebook. This is what professional data scientists use. Install Anaconda, and you're ready to code immediately.</p>
+  </div>
+
+  <div class="ibox">
+    <p style="font-size:12.5px;margin:0;"><strong style="color:var(--sky);">What You Get with Anaconda:</strong> Python 3.11 · Jupyter Notebook · JupyterLab · Pandas · NumPy · Matplotlib · Seaborn · Scikit-learn · SciPy · Conda (package manager) · Anaconda Navigator (graphical launcher)</p>
+  </div>
+
+  <h2 style="color:#7dd87a;">Step-by-Step Installation — Windows</h2>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(99,102,241,.15);color:var(--accent);">1</div>
+    <div class="vstep-body">
+      <strong>Download the Anaconda Installer</strong>
+      <p>Visit <a href="https://www.anaconda.com/download" target="_blank">anaconda.com/download</a>. The website automatically detects your OS. Click the big <span class="highlight">Download</span> button. File name will be like: <span class="cmd">Anaconda3-2024.xx-Windows-x86_64.exe</span></p>
+    </div>
+  </div>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(99,102,241,.15);color:var(--accent);">2</div>
+    <div class="vstep-body">
+      <strong>Run the Installer</strong>
+      <p>Double-click the downloaded <span class="cmd">.exe</span> file. Windows will ask "Do you want to allow this app to make changes?" → Click <span class="highlight">Yes</span>. The Anaconda Setup wizard opens.</p>
+    </div>
+  </div>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(99,102,241,.15);color:var(--accent);">3</div>
+    <div class="vstep-body">
+      <strong>Welcome Screen → Click Next</strong>
+      <p>You'll see the Anaconda3 Setup welcome screen with the Anaconda logo. Click <span class="highlight">Next</span> to continue.</p>
+    </div>
+  </div>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(251,191,36,.15);color:var(--gold);">4</div>
+    <div class="vstep-body">
+      <strong>License Agreement → Click "I Agree"</strong>
+      <p>Read the license agreement (scroll to bottom) then click <span class="highlight">I Agree</span>.</p>
+    </div>
+  </div>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(251,191,36,.15);color:var(--gold);">5</div>
+    <div class="vstep-body">
+      <strong>Installation Type → Select "Just Me" (Recommended)</strong>
+      <p>Two options: "Just Me" or "All Users". <span class="highlight">Select "Just Me"</span> — this avoids needing Administrator permissions for every package install later.</p>
+    </div>
+  </div>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(251,191,36,.15);color:var(--gold);">6</div>
+    <div class="vstep-body">
+      <strong>Choose Install Location → Keep Default</strong>
+      <p>Default path: <span class="cmd">C:\Users\YourName\anaconda3</span>. Keep this default. Do NOT install in <span class="cmd">C:\Program Files</span> — causes permission errors. Click <span class="highlight">Next</span>.</p>
+    </div>
+  </div>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(248,113,113,.15);color:var(--coral);">7</div>
+    <div class="vstep-body">
+      <strong>⚠️ Advanced Options — CRITICAL STEP</strong>
+      <p>You'll see two checkboxes. <span class="highlight">Check BOTH boxes:</span><br>
+      ☑️ <strong>"Add Anaconda3 to my PATH environment variable"</strong> (important!)<br>
+      ☑️ "Register Anaconda3 as my default Python"<br>
+      Then click <span class="highlight">Install</span>. Installation takes 5–15 minutes.</p>
+    </div>
+  </div>
+
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(52,211,153,.15);color:var(--green);">8</div>
+    <div class="vstep-body">
+      <strong>Installation Complete → Finish</strong>
+      <p>When you see "Installation Complete!", click <span class="highlight">Next</span> → you'll see optional "Learn more" checkboxes, uncheck them if you don't want browser windows opening → click <span class="highlight">Finish</span>.</p>
+    </div>
+  </div>
+
+  <div class="cd warn" style="margin-top:4px;">
+    <span class="tg yl">⚠️ Important After Install</span>
+    <p><strong>Restart your computer</strong> after Anaconda installation before doing anything else. This ensures PATH variables are loaded correctly.</p>
+  </div>
+
+  <h2 style="color:#7dd87a;">Step-by-Step Installation — macOS</h2>
+  <ol class="steps">
+    <li><strong>Download the macOS installer</strong><span>Visit <a href="https://www.anaconda.com/download" target="_blank">anaconda.com/download</a>. Under "macOS", download the <strong>Graphical Installer (.pkg)</strong> — easier than command line.</span></li>
+    <li><strong>Open the .pkg file</strong><span>Double-click the downloaded file. macOS may warn "file from internet" → click <strong>Open</strong> to proceed.</span></li>
+    <li><strong>Follow the installer wizard</strong><span>Click Continue through Introduction, Read Me, License (click Agree). For Destination, select <strong>"Install for me only"</strong>.</span></li>
+    <li><strong>Complete installation</strong><span>Click Install. Enter your Mac password when prompted. Wait for completion (~10 min). Click Close when done.</span></li>
+    <li><strong>Restart Terminal</strong><span>Close and reopen Terminal. You should now see <span class="cmd">(base)</span> at the start of your prompt — this confirms Anaconda is active.</span></li>
+  </ol>
+
+  <h2 style="color:#7dd87a;">Launching Jupyter Notebook</h2>
+  <p>After installing Anaconda, you can launch Jupyter two ways:</p>
+  <div class="g2">
+    <div class="cd hl">
+      <span class="tg bl">Method 1 — Anaconda Navigator (Easy)</span>
+      <ol style="padding-left:16px;font-size:12.5px;">
+        <li>Search "Anaconda Navigator" in Start menu</li>
+        <li>Open Anaconda Navigator</li>
+        <li>Find "Jupyter Notebook" tile → Click <strong>Launch</strong></li>
+        <li>Browser opens automatically at <code style="color:var(--teal);">localhost:8888</code></li>
+      </ol>
+    </div>
+    <div class="cd purp">
+      <span class="tg pp">Method 2 — Command Line (Faster)</span>
+      <ol style="padding-left:16px;font-size:12.5px;">
+        <li>Open <strong>Anaconda Prompt</strong> (Windows) or <strong>Terminal</strong> (Mac)</li>
+        <li>Type: <code style="color:var(--teal);font-family:'JetBrains Mono',monospace;">jupyter notebook</code></li>
+        <li>Press Enter</li>
+        <li>Browser opens automatically</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="verify">
+    <div class="vt">✅ Verify Python + Anaconda Installation</div>
+    <p style="font-size:12.5px;margin-bottom:8px;">Open <strong>Anaconda Prompt</strong> (Windows) or <strong>Terminal</strong> (Mac/Linux) and run these commands:</p>
+    <div class="co"><span class="cl">Anaconda Prompt / Terminal</span><code><span class="cm"># Check Python version</span>
+python --version
+<span class="ok-line"># Expected: Python 3.11.x or 3.12.x</span>
+
+<span class="cm"># Check Conda version</span>
+conda --version
+<span class="ok-line"># Expected: conda 24.x.x or similar</span>
+
+<span class="cm"># Check Jupyter is installed</span>
+jupyter --version
+<span class="ok-line"># Expected: Shows jupyter_core, notebook versions</span>
+
+<span class="cm"># List installed packages (you should see 250+)</span>
+conda list | wc -l</code></div>
+    <p style="font-size:12.5px;margin-top:8px;">All commands should return version numbers without errors. If you see version numbers = installation successful ✅</p>
+  </div>
+
+  <h2 style="color:#7dd87a;">Common Errors & Fixes</h2>
+  <table class="tb">
+    <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+    <tr><td><code class="err-line">'python' is not recognized</code></td><td>PATH not set</td><td>Uninstall and reinstall — make sure to CHECK the "Add to PATH" box in Step 7</td></tr>
+    <tr><td><code class="err-line">'conda' is not recognized</code></td><td>Using wrong terminal</td><td>Use <strong>Anaconda Prompt</strong>, not regular Command Prompt</td></tr>
+    <tr><td>Jupyter opens but no browser</td><td>Default browser issue</td><td>Manually open <code style="color:var(--teal);">http://localhost:8888</code> in Chrome</td></tr>
+    <tr><td>Installation stuck at 0%</td><td>Antivirus blocking</td><td>Temporarily disable antivirus during installation, re-enable after</td></tr>
+    <tr><td>macOS: "cannot be opened" error</td><td>Gatekeeper security</td><td>System Preferences → Security → "Open Anyway"</td></tr>
+    <tr><td>Port 8888 already in use</td><td>Another Jupyter running</td><td>Run: <code style="color:var(--teal);">jupyter notebook --port=8889</code></td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ============================================================ PAGE 3: GIT & GITHUB -->
+<div class="page" id="page-3">
+<div class="pg">
+
+  <div class="tool-header">
+    <div class="tool-logo" style="background:rgba(240,80,50,.12);">🔀</div>
+    <div class="tool-info">
+      <h2 style="color:#f97060;margin:0 0 3px;">Git & GitHub</h2>
+      <p>Version control system + online portfolio for all your code and projects</p>
+      <div class="tool-meta">
+        <span class="tmeta" style="background:rgba(52,211,153,.12);color:var(--green);">100% Free</span>
+        <span class="tmeta" style="background:rgba(99,102,241,.12);color:var(--accent);">Windows / Mac / Linux</span>
+        <span class="tmeta" style="background:rgba(96,165,250,.12);color:var(--sky);">~60 MB download</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd hl">
+    <span class="tg bl">Git vs GitHub — What's the Difference?</span>
+    <div class="g2" style="margin-top:8px;">
+      <div>
+        <p style="font-size:12.5px;"><strong style="color:var(--teal);">Git</strong> is software installed on your computer. It tracks every change you make to your code — like "Track Changes" in Word, but for code. You use it through the command line.</p>
+      </div>
+      <div>
+        <p style="font-size:12.5px;"><strong style="color:var(--sky);">GitHub</strong> is a website (github.com) where you upload your Git-tracked code. It's your online portfolio — every data science project you build goes here. Recruiters look at your GitHub.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="color:#f97060;">Part 1: Install Git</h2>
+
+  <div class="ostabs" id="git-os-tabs">
+    <div class="ostab active" onclick="switchOS('git','win')">Windows</div>
+    <div class="ostab" onclick="switchOS('git','mac')">macOS</div>
+    <div class="ostab" onclick="switchOS('git','lin')">Linux</div>
+  </div>
+
+  <div class="os-content active" id="git-win">
+    <ol class="steps">
+      <li><strong>Download Git for Windows</strong><span>Visit <a href="https://git-scm.com/downloads" target="_blank">git-scm.com/downloads</a> → Click <strong>"Download for Windows"</strong>. File is named <span class="cmd">Git-2.xx.x-64-bit.exe</span></span></li>
+      <li><strong>Run the installer</strong><span>Double-click the downloaded .exe file → Click <strong>Yes</strong> for admin permission. Click <strong>Next</strong> through the first few screens (licence, location) — keep all defaults.</span></li>
+      <li><strong>Choose Default Editor</strong><span>You'll see "Choosing the default editor used by Git". From the dropdown, select <strong>"Use Visual Studio Code as Git's default editor"</strong> if you have VS Code, otherwise keep <strong>Nano</strong>. Click Next.</span></li>
+      <li><strong>⚠️ PATH Environment — IMPORTANT</strong><span>Select <strong>"Git from the command line and also from 3rd-party software"</strong> (middle option). This lets you use git from any terminal. Click Next.</span></li>
+      <li><strong>Keep all remaining defaults</strong><span>Click <strong>Next</strong> through: HTTPS transport backend (keep OpenSSL), line endings (keep default), terminal emulator (keep MinTTY), default behaviour (keep default). Click <strong>Install</strong>.</span></li>
+      <li><strong>Finish</strong><span>Uncheck "View Release Notes" → Click <strong>Finish</strong>. Git is now installed.</span></li>
+    </ol>
+  </div>
+
+  <div class="os-content" id="git-mac">
+    <ol class="steps">
+      <li><strong>Check if Git is already installed</strong><span>Open Terminal and type: <span class="cmd">git --version</span>. On many Macs, Git comes pre-installed with Xcode Command Line Tools. If you see a version number, you're done!</span></li>
+      <li><strong>If not installed — Install via Homebrew</strong><span>First install Homebrew: paste this in Terminal: <span class="cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></span></li>
+      <li><strong>Install Git</strong><span>After Homebrew installs, run: <span class="cmd">brew install git</span></span></li>
+      <li><strong>Alternative: Download installer</strong><span>Visit <a href="https://git-scm.com/download/mac" target="_blank">git-scm.com/download/mac</a> → Download the .dmg installer → Double-click to install.</span></li>
+    </ol>
+  </div>
+
+  <div class="os-content" id="git-lin">
+    <div class="co"><span class="cl">Terminal</span><code><span class="cm"># Ubuntu / Debian</span>
+sudo apt update
+sudo apt install git
+
+<span class="cm"># Fedora</span>
+sudo dnf install git
+
+<span class="cm"># Arch Linux</span>
+sudo pacman -S git</code></div>
+  </div>
+
+  <h2 style="color:#f97060;">Part 2: Create a GitHub Account</h2>
+  <ol class="steps">
+    <li><strong>Visit github.com</strong><span>Go to <a href="https://github.com" target="_blank">github.com</a> → Click <strong>"Sign up"</strong> (top right corner).</span></li>
+    <li><strong>Enter your details</strong><span>Email address → Create a password → Choose a username. <strong>Choose your username carefully</strong> — this is your professional identity. Use your real name or initials (e.g., <span class="cmd">priya-sharma-ds</span>).</span></li>
+    <li><strong>Verify your email</strong><span>GitHub sends a verification code to your email. Enter the code on the website. Your account is now active.</span></li>
+    <li><strong>Choose the Free plan</strong><span>GitHub Free is more than enough for students. It includes unlimited public AND private repositories.</span></li>
+  </ol>
+
+  <h2 style="color:#f97060;">Part 3: Configure Git on Your Computer</h2>
+  <p>After installing Git, run these two commands to link Git to your identity. Open <strong>Git Bash</strong> (Windows) or <strong>Terminal</strong> (Mac/Linux):</p>
+
+  <div class="co"><span class="cl">Git Bash / Terminal — Run Once</span><code><span class="cm"># Set your name (use your real name)</span>
+git config --global user.name "Your Full Name"
+
+<span class="cm"># Set your email (must match your GitHub email)</span>
+git config --global user.email "your.email@gmail.com"
+
+<span class="cm"># Verify the settings saved correctly</span>
+git config --list
+<span class="ok-line"># Expected: Shows user.name and user.email</span></code></div>
+
+  <div class="verify">
+    <div class="vt">✅ Verify Git Installation</div>
+    <div class="co"><span class="cl">Terminal</span><code>git --version
+<span class="ok-line"># Expected: git version 2.xx.x</span>
+
+git config user.name
+<span class="ok-line"># Expected: Your Full Name</span>
+
+git config user.email
+<span class="ok-line"># Expected: your.email@gmail.com</span></code></div>
+  </div>
+
+  <div class="cd ok">
+    <span class="tg gn">Why GitHub Matters for Your Career</span>
+    <p>Every project you build in this course should go on GitHub. Recruiters specifically ask for your GitHub link. A GitHub profile with 5 good DS projects is worth more than most certifications.</p>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ PAGE 4: MYSQL -->
+<div class="page" id="page-4">
+<div class="pg">
+
+  <div class="tool-header">
+    <div class="tool-logo" style="background:rgba(68,121,161,.12);">🗄️</div>
+    <div class="tool-info">
+      <h2 style="color:#60a5fa;margin:0 0 3px;">MySQL</h2>
+      <p>Relational database management system for storing, querying, and managing structured data</p>
+      <div class="tool-meta">
+        <span class="tmeta" style="background:rgba(52,211,153,.12);color:var(--green);">100% Free (Community Edition)</span>
+        <span class="tmeta" style="background:rgba(99,102,241,.12);color:var(--accent);">Windows / Mac / Linux</span>
+        <span class="tmeta" style="background:rgba(251,191,36,.12);color:var(--gold);">~500 MB download</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd info">
+    <span class="tg sk">What MySQL Is Used For in This Course</span>
+    <p>You'll use MySQL to write SQL queries — the language used to extract data from databases. SQL is used in <strong>every single data analyst role</strong>. MySQL Workbench (included in the installer) is the visual interface where you'll write and run those queries.</p>
+  </div>
+
+  <h2 style="color:#60a5fa;">Installation — Windows (Recommended: MySQL Installer)</h2>
+
+  <ol class="steps">
+    <li>
+      <strong>Download MySQL Installer</strong>
+      <span>Visit <a href="https://dev.mysql.com/downloads/installer/" target="_blank">dev.mysql.com/downloads/installer</a>. You'll see two options — choose <strong>"mysql-installer-community-8.x.x.msi"</strong> (the larger file, ~500 MB). Click <strong>Download</strong>. On the next page, click <strong>"No thanks, just start my download"</strong> (you don't need to create an account).</span>
+    </li>
+    <li>
+      <strong>Run the installer</strong>
+      <span>Double-click the downloaded .msi file. Click <strong>Yes</strong> for admin permission. The MySQL Installer window opens.</span>
+    </li>
+    <li>
+      <strong>Choose Setup Type → Select "Developer Default"</strong>
+      <span>You'll see 5 options. Select <strong>"Developer Default"</strong> — this installs MySQL Server, MySQL Workbench, and the connection tools all at once. Click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>Check Requirements</strong>
+      <span>The installer checks for required software. If it shows any items with a yellow warning, click <strong>Execute</strong> to install missing components. Wait for all to complete, then click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>Installation — Click Execute</strong>
+      <span>You'll see a list of products to install. Click <strong>Execute</strong>. Each product installs one by one (takes 5–10 minutes). Wait for all to show green checkmarks, then click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>Product Configuration → Click Next</strong>
+      <span>Click <strong>Next</strong> on the Product Configuration screen to start configuring MySQL Server.</span>
+    </li>
+    <li>
+      <strong>High Availability → Keep "Standalone MySQL Server" (default)</strong>
+      <span>Select <strong>Standalone MySQL Server / Classic MySQL Replication</strong> (default). Click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>Type and Networking → Keep all defaults</strong>
+      <span>Config Type: <strong>Development Computer</strong>. Port: <strong>3306</strong> (default). TCP/IP: checked. Click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>Authentication Method → Keep "Use Strong Password Encryption"</strong>
+      <span>Keep the default option selected. Click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>⚠️ Set Root Password — WRITE THIS DOWN</strong>
+      <span>You must create a password for the root (admin) user. <strong>Write this password down immediately</strong> — you cannot recover it if forgotten. Use something memorable: e.g., <span class="cmd">DataScience@123</span>. Enter it twice, then click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>Windows Service → Keep defaults</strong>
+      <span>MySQL will run as a Windows Service. Keep <strong>"Start the MySQL Server at System Startup"</strong> checked. Click <strong>Next</strong>.</span>
+    </li>
+    <li>
+      <strong>Apply Configuration → Execute</strong>
+      <span>Click <strong>Execute</strong>. MySQL Server is now being configured. All 5 steps should get green checkmarks. Click <strong>Finish</strong>.</span>
+    </li>
+    <li>
+      <strong>Complete Remaining Configuration Steps</strong>
+      <span>Click <strong>Next</strong> → <strong>Finish</strong> through any remaining screens (MySQL Router, Samples). On the last screen, keep "Start MySQL Workbench after setup" checked → Click <strong>Finish</strong>.</span>
+    </li>
+  </ol>
+
+  <h2 style="color:#60a5fa;">First Login to MySQL Workbench</h2>
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(96,165,250,.15);color:var(--sky);">1</div>
+    <div class="vstep-body">
+      <strong>MySQL Workbench opens automatically</strong>
+      <p>You'll see the Workbench home screen with a connection box labeled <strong>"Local instance MySQL80"</strong> with port 3306.</p>
+    </div>
+  </div>
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(96,165,250,.15);color:var(--sky);">2</div>
+    <div class="vstep-body">
+      <strong>Click the connection box to connect</strong>
+      <p>A dialog asks for the password. Enter the root password you created during installation. Check <span class="highlight">"Save password in vault"</span> so you don't need to type it every time. Click <span class="highlight">OK</span>.</p>
+    </div>
+  </div>
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(52,211,153,.15);color:var(--green);">3</div>
+    <div class="vstep-body">
+      <strong>You're in!</strong>
+      <p>MySQL Workbench opens showing the query editor. The left panel shows databases. You're connected and ready to write SQL.</p>
+    </div>
+  </div>
+
+  <div class="verify">
+    <div class="vt">✅ Verify MySQL Installation</div>
+    <p style="font-size:12.5px;margin-bottom:8px;">In MySQL Workbench, click the Query tab and type:</p>
+    <div class="co"><span class="cl">MySQL Workbench Query</span><code><span class="cm">-- Type this and press Ctrl+Enter (or click the lightning bolt)</span>
+SELECT VERSION();
+<span class="ok-line">-- Expected output: 8.x.xx (a version number)</span>
+
+SHOW DATABASES;
+<span class="ok-line">-- Expected: Shows information_schema, mysql, performance_schema, sys</span></code></div>
+    <p style="font-size:12.5px;margin-top:6px;">If you see MySQL version number and database list = successfully installed ✅</p>
+  </div>
+
+  <h2 style="color:#60a5fa;">Common Errors & Fixes</h2>
+  <table class="tb">
+    <tr><th>Error</th><th>Cause</th><th>Fix</th></tr>
+    <tr><td>"Can't connect to MySQL server"</td><td>MySQL service not running</td><td>Search "Services" in Windows → Find "MySQL80" → Right-click → Start</td></tr>
+    <tr><td>Forgot root password</td><td>Lost credentials</td><td>Uninstall MySQL completely, delete C:\ProgramData\MySQL folder, reinstall</td></tr>
+    <tr><td>Port 3306 in use</td><td>Another MySQL version installed</td><td>Uninstall old MySQL first, then reinstall</td></tr>
+    <tr><td>Workbench won't open</td><td>Missing Visual C++ runtime</td><td>Install "Microsoft Visual C++ Redistributable" from Microsoft's website</td></tr>
+    <tr><td>macOS: "damaged, can't open"</td><td>Gatekeeper security</td><td>System Preferences → Security → "Open Anyway"</td></tr>
+  </table>
+
+  <div class="wcall">
+    <strong>⚠️ For Mac users:</strong> Visit <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">dev.mysql.com/downloads/mysql</a> → Download the <strong>.dmg</strong> installer for macOS. Installation flow is similar but uses the macOS Installer wizard. MySQL Workbench is a separate download at <a href="https://dev.mysql.com/downloads/workbench/" target="_blank">dev.mysql.com/downloads/workbench</a>.
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ PAGE 5: POWER BI -->
+<div class="page" id="page-5">
+<div class="pg">
+
+  <div class="tool-header">
+    <div class="tool-logo" style="background:rgba(242,200,17,.10);">📊</div>
+    <div class="tool-info">
+      <h2 style="color:#fbbf24;margin:0 0 3px;">Microsoft Power BI Desktop</h2>
+      <p>Free business analytics tool for building interactive reports and dashboards from any data source</p>
+      <div class="tool-meta">
+        <span class="tmeta" style="background:rgba(52,211,153,.12);color:var(--green);">100% Free</span>
+        <span class="tmeta" style="background:rgba(251,191,36,.12);color:var(--gold);">Windows Only</span>
+        <span class="tmeta" style="background:rgba(99,102,241,.12);color:var(--accent);">~500 MB download</span>
+        <span class="tmeta" style="background:rgba(248,113,113,.12);color:var(--coral);">No Mac version</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd warn">
+    <span class="tg yl">Important: Windows Only</span>
+    <p>Power BI Desktop is available <strong>only for Windows</strong>. Mac users can use <strong>Power BI Service</strong> (the browser version at <a href="https://app.powerbi.com" target="_blank">app.powerbi.com</a>) which requires a free work/school email (not Gmail). For Mac students, Tableau is the alternative desktop tool.</p>
+  </div>
+
+  <div class="cd info">
+    <span class="tg sk">What You'll Build with Power BI</span>
+    <p>Connect to Excel, CSV, databases, and web sources → Clean and transform data → Build interactive charts, maps, and KPI cards → Combine into dashboards → Publish to share with teams. Power BI is the #1 BI tool used in Indian enterprises today.</p>
+  </div>
+
+  <h2 style="color:#fbbf24;">Installation — Method 1: Microsoft Store (Easiest)</h2>
+  <ol class="steps">
+    <li><strong>Open Microsoft Store</strong><span>Press <span class="cmd">Windows key</span> → search "Microsoft Store" → Open it.</span></li>
+    <li><strong>Search for Power BI</strong><span>In the Store search bar, type <strong>"Power BI Desktop"</strong> and press Enter.</span></li>
+    <li><strong>Click "Get" or "Install"</strong><span>Click the <strong>Get</strong> button. You may need to sign in with a Microsoft account. The download and installation happen automatically.</span></li>
+    <li><strong>Launch from Start Menu</strong><span>After installation, search "Power BI Desktop" in the Start menu. Click to open.</span></li>
+  </ol>
+
+  <h2 style="color:#fbbf24;">Installation — Method 2: Direct Download (If Store Doesn't Work)</h2>
+  <ol class="steps">
+    <li><strong>Visit the Power BI download page</strong><span>Go to <a href="https://powerbi.microsoft.com/en-us/downloads/" target="_blank">powerbi.microsoft.com/downloads</a>. Click the <strong>"Download free"</strong> button under "Power BI Desktop".</span></li>
+    <li><strong>Choose your language and download</strong><span>Select <strong>English</strong> from the language dropdown. Choose <strong>64-bit</strong> (recommended for all modern computers). Click <strong>Download</strong>.</span></li>
+    <li><strong>Run the installer</strong><span>Open the downloaded <span class="cmd">PBIDesktopSetup_x64.exe</span>. Click <strong>Next</strong> on the welcome screen.</span></li>
+    <li><strong>Accept License Agreement</strong><span>Check <strong>"I accept the terms in the License Agreement"</strong> → Click <strong>Next</strong>.</span></li>
+    <li><strong>Choose destination folder</strong><span>Keep the default folder: <span class="cmd">C:\Program Files\Microsoft Power BI Desktop</span>. Click <strong>Next</strong> → Click <strong>Install</strong>.</span></li>
+    <li><strong>Installation completes</strong><span>Takes 2–5 minutes. When done, click <strong>Finish</strong>. Power BI Desktop opens automatically.</span></li>
+  </ol>
+
+  <h2 style="color:#fbbf24;">First Launch Setup</h2>
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(242,200,17,.12);color:var(--gold);">1</div>
+    <div class="vstep-body">
+      <strong>Welcome screen appears</strong>
+      <p>Power BI shows a "Welcome to Power BI Desktop" screen with options to connect to data, open a recent file, or take a guided tour. Close this dialog for now.</p>
+    </div>
+  </div>
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(242,200,17,.12);color:var(--gold);">2</div>
+    <div class="vstep-body">
+      <strong>Sign in (Optional but Recommended)</strong>
+      <p>Click <span class="highlight">Sign in</span> in the top right. Use a Microsoft account (work/school email preferred). Signing in enables publishing reports to Power BI Service for sharing. Personal Gmail will NOT work — use Outlook or your institute email.</p>
+    </div>
+  </div>
+  <div class="vstep">
+    <div class="vstep-num" style="background:rgba(52,211,153,.15);color:var(--green);">3</div>
+    <div class="vstep-body">
+      <strong>Quick Test — Connect to Excel Data</strong>
+      <p>Click <span class="highlight">Get Data → Excel Workbook</span> → select any .xlsx file on your computer → click Load. If a table appears on the right panel, Power BI is fully working.</p>
+    </div>
+  </div>
+
+  <div class="verify">
+    <div class="vt">✅ Verify Power BI is Working</div>
+    <ol style="padding-left:18px;font-size:12.5px;">
+      <li>Open Power BI Desktop</li>
+      <li>Click <strong>Home → Enter Data</strong></li>
+      <li>Type some numbers in the table that appears → Click <strong>Load</strong></li>
+      <li>On the right side, you should see a "Fields" panel with your data</li>
+      <li>Drag a number field to the canvas — a chart should appear</li>
+      <li>If chart appears = Power BI working correctly ✅</li>
+    </ol>
+  </div>
+
+  <h2 style="color:#fbbf24;">Common Errors & Fixes</h2>
+  <table class="tb">
+    <tr><th>Error</th><th>Fix</th></tr>
+    <tr><td>"This app can't run on your PC"</td><td>You have 32-bit Windows. Download the 32-bit version from the download page.</td></tr>
+    <tr><td>Sign-in says "Need work or school account"</td><td>Use your institute email. If none, create a free Microsoft 365 Developer account.</td></tr>
+    <tr><td>Slow to open Excel files</td><td>Normal for large files. For practice, keep datasets under 100,000 rows.</td></tr>
+    <tr><td>Not in Microsoft Store (region issue)</td><td>Use Method 2 (direct download). Change Store region to United States if needed.</td></tr>
+  </table>
+
+  <div class="cd ok">
+    <span class="tg gn">Mac Alternative: Power BI Service</span>
+    <p>Mac users: visit <a href="https://app.powerbi.com" target="_blank">app.powerbi.com</a>. Create a free account using a work/school email. You can do ~80% of what Power BI Desktop does, directly in the browser. Use your institute/college email to sign up.</p>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ PAGE 6: TABLEAU -->
+<div class="page" id="page-6">
+<div class="pg">
+
+  <div class="tool-header">
+    <div class="tool-logo" style="background:rgba(233,118,39,.12);">📈</div>
+    <div class="tool-info">
+      <h2 style="color:#fdba74;margin:0 0 3px;">Tableau Desktop</h2>
+      <p>Industry-leading data visualisation tool for creating interactive, publication-quality dashboards</p>
+      <div class="tool-meta">
+        <span class="tmeta" style="background:rgba(52,211,153,.12);color:var(--green);">Free for Students (1 year)</span>
+        <span class="tmeta" style="background:rgba(99,102,241,.12);color:var(--accent);">Windows & Mac</span>
+        <span class="tmeta" style="background:rgba(251,191,36,.12);color:var(--gold);">~1 GB download</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cd ok">
+    <span class="tg gn">Student Licence — 1 Year Free</span>
+    <p>Tableau offers a <strong>free 1-year student licence</strong> for enrolled students. This gives you the full Tableau Desktop (normally ₹75,000/year) for free. Use your <strong>college/institute email</strong> to verify student status. This is the recommended option — do this before the 14-day trial.</p>
+    <p>Student licence URL: <a href="https://www.tableau.com/academic/students" target="_blank">tableau.com/academic/students</a></p>
+  </div>
+
+  <h2 style="color:#fdba74;">Option A — Student Licence (Recommended)</h2>
+  <ol class="steps">
+    <li><strong>Visit the Student Licence page</strong><span>Go to <a href="https://www.tableau.com/academic/students" target="_blank">tableau.com/academic/students</a>. Click <strong>"Get Tableau for Free"</strong>.</span></li>
+    <li><strong>Fill in the verification form</strong><span>Enter: First name, Last name, <strong>College/university email address</strong> (.ac.in or .edu email), School name, Country (India), Graduation year. Click <strong>Verify Student Status</strong>.</span></li>
+    <li><strong>Confirmation email arrives</strong><span>Check your college email inbox. Tableau sends a confirmation link. Click <strong>"Confirm and Download"</strong>. This takes you to the Tableau download page.</span></li>
+    <li><strong>Download Tableau Desktop</strong><span>On the download page, click <strong>Download Tableau Desktop</strong>. Choose <strong>Windows (.exe)</strong> or <strong>macOS (.dmg)</strong> based on your system.</span></li>
+    <li><strong>Install Tableau</strong><span>Run the installer. Follow the wizard — accept licence, choose installation folder (keep default). Takes 5–10 minutes.</span></li>
+    <li><strong>Activate with Student Licence Key</strong><span>When Tableau opens, select <strong>"Activate Tableau"</strong>. Enter the licence key from the email Tableau sent you. Click <strong>Activate</strong>. You're done — full access for 1 year!</span></li>
+  </ol>
+
+  <h2 style="color:#fdba74;">Option B — 14-Day Free Trial</h2>
+  <p>If you don't have a college email or are a career switcher, use the 14-day trial to get started:</p>
+  <ol class="steps">
+    <li><strong>Visit Tableau products page</strong><span>Go to <a href="https://www.tableau.com/products/desktop" target="_blank">tableau.com/products/desktop</a>. Click <strong>"Try for Free"</strong>.</span></li>
+    <li><strong>Fill in your details</strong><span>Enter your name, work email, company/organisation name, country. Click <strong>"Download Free Trial"</strong>.</span></li>
+    <li><strong>Download and install</strong><span>Same installation steps as Option A above (Steps 4–5). Run the installer, follow the wizard.</span></li>
+    <li><strong>Sign in on first launch</strong><span>When Tableau opens, click <strong>"Start Trial"</strong> → Sign in with the email you used to register. Trial starts from this moment — you have 14 days of full access.</span></li>
+  </ol>
+
+  <div class="wcall">
+    <strong>⚠️ Trial Timing Tip:</strong> Don't start the 14-day trial until your Tableau session in class begins. Register and download now, but only activate (click "Start Trial") when the instructor says it's time to use Tableau in lessons. This maximises your 14 free days.
+  </div>
+
+  <h2 style="color:#fdba74;">Installation Steps — Windows</h2>
+  <ol class="steps">
+    <li><strong>Run the installer</strong><span>Double-click the downloaded <span class="cmd">TableauDesktop-xx.x.x.exe</span>. Click <strong>Yes</strong> for admin permission.</span></li>
+    <li><strong>Accept the licence agreement</strong><span>Check <strong>"I have read and accept the terms of this licence agreement"</strong> → Click <strong>Install</strong>.</span></li>
+    <li><strong>Installation runs automatically</strong><span>A progress bar shows the installation. Takes 5–15 minutes. Do not close the window.</span></li>
+    <li><strong>Installation complete</strong><span>Click <strong>Finish</strong>. Tableau Desktop opens automatically.</span></li>
+  </ol>
+
+  <h2 style="color:#fdba74;">Installation Steps — macOS</h2>
+  <ol class="steps">
+    <li><strong>Open the .dmg file</strong><span>Double-click <span class="cmd">TableauDesktop-xx.x.x.dmg</span>. A window opens showing the Tableau icon.</span></li>
+    <li><strong>Drag to Applications</strong><span>Drag the Tableau Desktop icon to the <strong>Applications</strong> folder in the same window.</span></li>
+    <li><strong>Open from Applications</strong><span>Go to Finder → Applications → double-click Tableau Desktop. macOS may warn about unverified developer — go to <strong>System Preferences → Security → Open Anyway</strong>.</span></li>
+  </ol>
+
+  <div class="verify">
+    <div class="vt">✅ Verify Tableau Installation</div>
+    <ol style="padding-left:18px;font-size:12.5px;">
+      <li>Open Tableau Desktop — the Start page should appear with a "Connect to Data" panel on the left</li>
+      <li>Click <strong>"Microsoft Excel"</strong> under "To a File"</li>
+      <li>Select any .xlsx file from your computer</li>
+      <li>The data preview should appear at the bottom of the screen</li>
+      <li>Click <strong>"Sheet 1"</strong> tab at the bottom — the Tableau canvas opens</li>
+      <li>Drag any field from the left panel to "Columns" or "Rows" — a chart should appear</li>
+      <li>Chart appears = Tableau is working correctly ✅</li>
+    </ol>
+  </div>
+
+  <h2 style="color:#fdba74;">Common Errors & Fixes</h2>
+  <table class="tb">
+    <tr><th>Error</th><th>Fix</th></tr>
+    <tr><td>"Licence has expired" on trial</td><td>Apply for the student licence (Option A) to get 1 more year free. Or purchase a licence.</td></tr>
+    <tr><td>Student email not accepted</td><td>Use exactly your .ac.in or .edu email. If still rejected, contact Tableau support with student ID.</td></tr>
+    <tr><td>App won't open on macOS</td><td>System Preferences → Security & Privacy → Open Anyway</td></tr>
+    <tr><td>Data won't load from Excel</td><td>Ensure the Excel file is closed before connecting in Tableau. Tableau can't read open files.</td></tr>
+    <tr><td>Slow performance with large data</td><td>Use data extracts (.hyper) instead of live connections for practice files</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- ============================================================ PAGE 7: VERIFY ALL -->
+<div class="page" id="page-7">
+<div class="pg">
+
+  <div class="hero" style="background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(45,212,191,.04));border:1px solid rgba(52,211,153,.18);">
+    <div class="hero-label" style="color:var(--green);">Final Verification</div>
+    <h1>Confirm Everything<br>is Working</h1>
+    <p class="hero-sub">Run through this checklist after installing all tools. Use the verification commands to confirm each tool is properly installed before your first practical session.</p>
+  </div>
+
+  <h2 style="color:var(--green);">Complete Verification Checklist</h2>
+
+  <div class="verify" style="margin-bottom:10px;">
+    <div class="vt">✅ 1. Anaconda / Python</div>
+    <div class="co"><span class="cl">Anaconda Prompt</span><code>python --version
+<span class="ok-line"># ✅ Expected: Python 3.11.x or 3.12.x</span>
+
+conda --version
+<span class="ok-line"># ✅ Expected: conda 24.x.x</span>
+
+jupyter notebook
+<span class="ok-line"># ✅ Expected: Browser opens at localhost:8888</span></code></div>
+  </div>
+
+  <div class="verify" style="margin-bottom:10px;">
+    <div class="vt">✅ 2. Git</div>
+    <div class="co"><span class="cl">Terminal / Git Bash</span><code>git --version
+<span class="ok-line"># ✅ Expected: git version 2.xx.x</span>
+
+git config user.name
+<span class="ok-line"># ✅ Expected: Your name (if configured)</span></code></div>
+  </div>
+
+  <div class="verify" style="margin-bottom:10px;">
+    <div class="vt">✅ 3. MySQL</div>
+    <p style="font-size:12.5px;margin-bottom:6px;">Open MySQL Workbench → Connect to Local Instance → Run in Query tab:</p>
+    <div class="co"><span class="cl">MySQL Workbench</span><code>SELECT VERSION();
+<span class="ok-line">-- ✅ Expected: 8.x.xx</span>
+
+SHOW DATABASES;
+<span class="ok-line">-- ✅ Expected: List of default databases</span></code></div>
+  </div>
+
+  <div class="verify" style="margin-bottom:10px;">
+    <div class="vt">✅ 4. Excel</div>
+    <p style="font-size:12.5px;">Open Excel → New Workbook → Type <code style="color:var(--teal);font-family:'JetBrains Mono',monospace;">=SUM(10,20)</code> in A1 → Press Enter → Should show <strong>30</strong></p>
+  </div>
+
+  <div class="verify" style="margin-bottom:10px;">
+    <div class="vt">✅ 5. Power BI Desktop (Windows only)</div>
+    <p style="font-size:12.5px;">Open Power BI Desktop → Home → Enter Data → Type some numbers → Load → Drag a field to canvas → Chart appears</p>
+  </div>
+
+  <div class="verify" style="margin-bottom:10px;">
+    <div class="vt">✅ 6. Tableau Desktop</div>
+    <p style="font-size:12.5px;">Open Tableau → Connect to Excel file → Click Sheet 1 tab → Drag a field to Rows/Columns → Chart appears</p>
+  </div>
+
+  <h2 style="color:var(--green);">Troubleshooting Summary</h2>
+  <table class="tb">
+    <tr><th>Tool</th><th>Most Common Issue</th><th>Quickest Fix</th></tr>
+    <tr><td>🅰️ <strong>Anaconda</strong></td><td>python/conda not recognized</td><td>Reinstall, check "Add to PATH" box during setup</td></tr>
+    <tr><td>🐍 <strong>Jupyter</strong></td><td>Browser doesn't open</td><td>Manually go to <code style="color:var(--teal);">http://localhost:8888</code></td></tr>
+    <tr><td>🔀 <strong>Git</strong></td><td>Using wrong terminal</td><td>Always use <strong>Git Bash</strong> (Windows) or Terminal (Mac)</td></tr>
+    <tr><td>🗄️ <strong>MySQL</strong></td><td>Can't connect to server</td><td>Search "Services" → Start MySQL80 service</td></tr>
+    <tr><td>📊 <strong>Power BI</strong></td><td>Sign-in issues</td><td>Use Microsoft/institute email, not personal Gmail</td></tr>
+    <tr><td>📈 <strong>Tableau</strong></td><td>Licence expired</td><td>Apply for student licence at tableau.com/academic/students</td></tr>
+    <tr><td>🟢 <strong>Excel</strong></td><td>Activation failed</td><td>File → Account → Sign in with purchase account</td></tr>
+  </table>
+
+  <h2 style="color:var(--green);">Emergency Backup — Google Colab</h2>
+  <div class="cd ok">
+    <span class="tg gn">If Anaconda / Jupyter Fails → Use Google Colab</span>
+    <p>Google Colab is a <strong>free, browser-based Jupyter Notebook</strong> hosted on Google's servers. No installation needed. Works on any device.</p>
+    <ol class="steps" style="margin-top:10px;">
+      <li><strong>Open Google Colab</strong><span>Go to <a href="https://colab.research.google.com" target="_blank">colab.research.google.com</a>. Sign in with your Google account.</span></li>
+      <li><strong>Create new notebook</strong><span>Click <strong>File → New Notebook</strong>. A notebook opens immediately — no setup required.</span></li>
+      <li><strong>Test it works</strong><span>In the first cell, type: <code style="color:var(--teal);font-family:'JetBrains Mono',monospace;">print("Hello from Colab!")</code> → Press <strong>Shift+Enter</strong></span></li>
+    </ol>
+    <p style="font-size:12.5px;margin-top:8px;">Google Colab has Python, Pandas, NumPy, Matplotlib, Seaborn, and Scikit-learn pre-installed. For 90% of the course exercises, it works perfectly as a backup.</p>
+  </div>
+
+  <div class="cd hl" style="margin-top:16px;">
+    <span class="tg bl">All Tools Installed? You're Ready!</span>
+    <p>With all 7 tools installed and verified, you have a complete professional data science environment. The same setup used by working data scientists at companies like Infosys, TCS, Flipkart, and Zomato.</p>
+    <p style="font-size:12.5px;color:var(--muted);margin-top:6px;">Keep this guide handy throughout the course. If you ever reinstall Windows or get a new laptop, follow the same steps in the same order.</p>
+  </div>
+</div>
+</div>
+
+</div><!-- pages-wrap -->
+<div class="prog" id="prog"></div>
+
+<script>
+const tabs=[
+  {n:"Overview",dot:"#6366f1"},
+  {n:"Excel",dot:"#6fcf97"},
+  {n:"Anaconda + Python",dot:"#7dd87a"},
+  {n:"Git & GitHub",dot:"#f97060"},
+  {n:"MySQL",dot:"#60a5fa"},
+  {n:"Power BI",dot:"#fbbf24"},
+  {n:"Tableau",dot:"#fdba74"},
+  {n:"Verify All",dot:"#34d399"}
+];
+const navTabs=document.getElementById('navTabs');
+const pages=document.querySelectorAll('.page');
+let cur=0;
+tabs.forEach((t,i)=>{
+  const el=document.createElement('div');
+  el.className='nav-tab'+(i===0?' active':'');
+  el.innerHTML=`<span class="tab-dot" style="background:${t.dot}${i===0?'':'55'}"></span>${t.n}`;
+  el.addEventListener('click',()=>go(i));
+  navTabs.appendChild(el);
+});
+function go(i){
+  pages[cur].classList.remove('active');
+  const allTabs=document.querySelectorAll('.nav-tab');
+  allTabs[cur].classList.remove('active');
+  allTabs[cur].querySelector('.tab-dot').style.opacity='0.4';
+  cur=i;
+  pages[cur].classList.add('active');
+  allTabs[cur].classList.add('active');
+  allTabs[cur].querySelector('.tab-dot').style.opacity='1';
+  pages[cur].scrollTop=0;
+  allTabs[cur].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  up();
+}
+document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+  const dot=t.querySelector('.tab-dot');
+  if(i!==0)dot.style.opacity='0.4';
+});
+function up(){
+  const p=pages[cur];
+  const pct=p.scrollHeight<=p.clientHeight?100:(p.scrollTop/(p.scrollHeight-p.clientHeight))*100;
+  document.getElementById('prog').style.width=pct+'%';
+}
+pages.forEach(p=>p.addEventListener('scroll',up));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&cur<tabs.length-1)go(cur+1);
+  if(e.key==='ArrowLeft'&&cur>0)go(cur-1);
+});
+pages[0].classList.add('active');up();
+
+function switchOS(tool, os){
+  const allTabs=document.querySelectorAll(`#${tool}-os-tabs .ostab`);
+  allTabs.forEach(t=>t.classList.remove('active'));
+  const map={win:0,mac:1,lin:2};
+  allTabs[map[os]].classList.add('active');
+  ['win','mac','lin'].forEach(id=>{
+    const el=document.getElementById(`${tool}-${id}`);
+    if(el) el.classList.remove('active');
+  });
+  const target=document.getElementById(`${tool}-${os}`);
+  if(target) target.classList.add('active');
+}
+</script>
+</body>
+</html>
