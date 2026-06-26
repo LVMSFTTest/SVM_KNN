@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Excel — 3-Hour Session</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#05090f;--surface:#0c1420;--card:#101b2a;--alt:#142033;--deep:#08111c;
+  --accent:#f59e0b;--accent2:#3b82f6;--teal:#14b8a6;--purple:#8b5cf6;
+  --coral:#f43f5e;--green:#22c55e;--sky:#38bdf8;--orange:#fb923c;
+  --gold:#fbbf24;--lime:#a3e635;
+  --text:#e8edf3;--muted:#6b7f96;--dim:#3a4f63;--border:#1a2d42;
+  --glow-a:rgba(245,158,11,.08);--glow-b:rgba(59,130,246,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(5,9,15,.96);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-brand{padding:10px 20px 0;display:flex;align-items:center;gap:12px;}
+.nav-logo{font-size:20px;}
+.nav-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:var(--accent);letter-spacing:.3px;}
+.nav-badge{font-size:10px;font-weight:600;background:rgba(245,158,11,.12);color:var(--accent);border:1px solid rgba(245,158,11,.25);border-radius:4px;padding:2px 7px;letter-spacing:.8px;text-transform:uppercase;}
+.nav-tabs{display:flex;overflow-x:auto;padding:6px 12px;gap:2px;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{flex-shrink:0;padding:6px 13px;border-radius:7px;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;border:1px solid transparent;white-space:nowrap;font-family:'Space Grotesk',sans-serif;}
+.nav-tab:hover{color:var(--text);background:var(--card);}
+.nav-tab.active{color:var(--accent);background:var(--glow-a);border-color:rgba(245,158,11,.25);}
+.nav-tab .n{font-family:'JetBrains Mono',monospace;font-size:9px;opacity:.45;margin-right:4px;}
+
+/* PAGES */
+.pages-wrap{margin-top:86px;height:calc(100vh - 86px);overflow:hidden;}
+.page{display:none;height:100%;overflow-y:auto;padding:32px 22px 80px;}
+.page.active{display:block;}
+.pg{max-width:880px;margin:0 auto;}
+
+/* TYPOGRAPHY */
+h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;line-height:1.15;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:28px 0 11px;color:var(--accent);}
+h3{font-size:15px;font-weight:600;margin:18px 0 8px;color:var(--teal);letter-spacing:.3px;}
+p,li{font-size:14px;line-height:1.78;margin-bottom:7px;}
+.sub{font-size:15px;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+ul{padding-left:18px;}
+
+/* CARDS */
+.cd{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin:12px 0;transition:border-color .2s;}
+.cd:hover{border-color:var(--dim);}
+.cd.hl{border-left:4px solid var(--accent);}
+.cd.bl{border-left:4px solid var(--accent2);}
+.cd.tl{border-left:4px solid var(--teal);}
+.cd.pp{border-left:4px solid var(--purple);}
+.cd.rd{border-left:4px solid var(--coral);}
+.cd.gn{border-left:4px solid var(--green);}
+.cd.or{border-left:4px solid var(--orange);}
+.cd.addon{border-left:4px solid var(--lime);background:linear-gradient(135deg,rgba(163,230,53,.04),transparent);}
+
+/* TAGS */
+.tg{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:2px 8px;border-radius:4px;margin-bottom:8px;}
+.tg.am{background:rgba(245,158,11,.12);color:var(--accent);}
+.tg.bl{background:rgba(59,130,246,.12);color:var(--accent2);}
+.tg.tl{background:rgba(20,184,166,.12);color:var(--teal);}
+.tg.pp{background:rgba(139,92,246,.12);color:var(--purple);}
+.tg.rd{background:rgba(244,63,94,.12);color:var(--coral);}
+.tg.gn{background:rgba(34,197,94,.12);color:var(--green);}
+.tg.or{background:rgba(251,146,60,.12);color:var(--orange);}
+.tg.lm{background:rgba(163,230,53,.12);color:var(--lime);}
+.tg.sk{background:rgba(56,189,248,.12);color:var(--sky);}
+
+/* CODE */
+.fm{background:var(--deep);border:1px solid var(--border);border-radius:10px;padding:13px 18px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:13.5px;color:var(--accent);text-align:center;}
+.co{background:var(--deep);border:1px solid var(--border);border-radius:10px;padding:13px 16px;margin:10px 0;overflow-x:auto;}
+.co code{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);white-space:pre;}
+.kw{color:#c792ea;}.fn{color:#82aaff;}.str{color:#c3e88d;}.cm{color:#4a6177;}.num{color:#f78c6c;}
+
+/* EXAMPLE */
+.ex{background:linear-gradient(135deg,rgba(245,158,11,.05),rgba(59,130,246,.03));border:1px solid rgba(245,158,11,.15);border-radius:14px;padding:18px;margin:12px 0;}
+.ex .et{font-size:13.5px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+
+/* TABLE */
+.tb{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}
+.tb th{background:var(--alt);color:var(--accent);padding:8px 12px;text-align:left;font-weight:700;font-size:11px;letter-spacing:.5px;border-bottom:2px solid var(--border);}
+.tb td{padding:8px 12px;border-bottom:1px solid var(--border);}
+.tb tr:hover td{background:rgba(245,158,11,.03);}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:12px 0;}
+.gc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;}
+.gc.pro{border-top:3px solid var(--green);}.gc.con{border-top:3px solid var(--coral);}
+.gc h4{font-size:13px;font-weight:700;margin-bottom:7px;}
+.gc.pro h4{color:var(--green);}.gc.con h4{color:var(--coral);}
+.gc ul{padding-left:14px;}.gc li{font-size:12.5px;margin-bottom:4px;color:var(--muted);}
+
+/* STEPS */
+.st{counter-reset:s;list-style:none;padding:0;}
+.st li{counter-increment:s;padding:10px 10px 10px 46px;position:relative;margin-bottom:6px;border-radius:10px;background:var(--card);border:1px solid var(--border);}
+.st li::before{content:counter(s);position:absolute;left:11px;top:10px;width:24px;height:24px;background:var(--glow-a);border:1px solid rgba(245,158,11,.25);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);}
+
+/* KBD */
+.sc{display:inline-block;background:var(--deep);border:1px solid var(--dim);border-radius:5px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);}
+
+/* STAT BADGES */
+.bds{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;}
+.bd{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;flex:1;min-width:100px;text-align:center;}
+.bd .v{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--accent);}
+.bd .l{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:.5px;}
+
+/* TIMELINE */
+.tl-wrap{position:relative;padding-left:28px;margin:14px 0;}
+.tl-wrap::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:13px;}
+.tl-item::before{content:'';position:absolute;left:-22px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);}
+.tl-time{font-size:11px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:2px;}
+.tl-title{font-size:14px;font-weight:700;}
+.tl-desc{font-size:12px;color:var(--muted);}
+
+/* CHART MOCK */
+.chart-mock{background:var(--deep);border:1px solid var(--border);border-radius:12px;padding:16px;margin:12px 0;}
+.chart-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase;}
+.bar-wrap{display:flex;align-items:flex-end;gap:6px;height:80px;}
+.bar{border-radius:4px 4px 0 0;min-width:30px;transition:opacity .2s;cursor:default;position:relative;}
+.bar:hover{opacity:.8;}
+.bar-label{font-size:9px;color:var(--muted);text-align:center;margin-top:4px;}
+.line-mock{position:relative;height:80px;}
+.line-svg{width:100%;height:100%;}
+
+/* PIVOT MOCK */
+.pvt{background:var(--deep);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;font-size:12px;}
+.pvt-hdr{background:var(--alt);display:grid;grid-template-columns:repeat(5,1fr);border-bottom:2px solid var(--border);}
+.pvt-hdr div,.pvt-row div{padding:7px 10px;border-right:1px solid var(--border);}
+.pvt-hdr div{font-weight:700;color:var(--accent);font-size:11px;letter-spacing:.3px;}
+.pvt-row{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border);}
+.pvt-row:last-child{border-bottom:none;}
+.pvt-row:nth-child(even) div{background:rgba(255,255,255,.015);}
+.pvt-row.total div{background:rgba(245,158,11,.08);font-weight:700;color:var(--accent);}
+
+/* QUIZ */
+.qz{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin:12px 0;}
+.qz .qt{font-weight:600;margin-bottom:10px;font-size:13.5px;}
+.qo{display:block;padding:8px 12px;margin:4px 0;border-radius:8px;border:1px solid var(--border);background:var(--alt);cursor:pointer;font-size:12.5px;color:var(--muted);transition:all .2s;text-align:left;width:100%;}
+.qo:hover{border-color:var(--accent);color:var(--text);}
+.qo.ok{border-color:var(--green);background:rgba(34,197,94,.07);color:var(--green);}
+.qo.no{border-color:var(--coral);background:rgba(244,63,94,.07);color:var(--coral);}
+.qf{display:none;margin-top:8px;padding:9px 12px;border-radius:8px;font-size:12px;line-height:1.65;}
+.qf.show{display:block;}.qf.r{background:rgba(34,197,94,.07);color:var(--green);border:1px solid rgba(34,197,94,.2);}.qf.w{background:rgba(244,63,94,.07);color:var(--coral);border:1px solid rgba(244,63,94,.2);}
+
+/* WORKSHOP */
+.ws-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin:12px 0;}
+.ws-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ws-num{width:34px;height:34px;background:var(--glow-a);border:1px solid rgba(245,158,11,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.ws-title{font-size:15px;font-weight:700;}
+.ws-time{font-size:11px;color:var(--muted);margin-top:2px;}
+.ws-tasks{list-style:none;padding:0;margin-top:8px;}
+.ws-tasks li{padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:flex-start;}
+.ws-tasks li:last-child{border-bottom:none;}
+.ws-tasks li::before{content:'◻';color:var(--accent);flex-shrink:0;font-size:11px;margin-top:2px;}
+.ws-tasks li strong{color:var(--text);}
+
+/* PROGRESS */
+.prog{position:fixed;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--gold),var(--orange));transition:width .15s;z-index:300;}
+.score-bar{position:fixed;bottom:10px;right:16px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent);z-index:299;display:none;}
+
+/* DATA PANEL */
+.data-panel{background:var(--deep);border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0;}
+.data-panel .dp-hdr{display:grid;gap:0;border-bottom:1px solid var(--border);margin-bottom:4px;}
+.data-panel .dp-hdr span{font-size:10px;font-weight:700;color:var(--accent);padding:4px 8px;letter-spacing:.4px;}
+.data-panel .dp-row{display:grid;gap:0;border-bottom:1px solid rgba(255,255,255,.03);}
+.data-panel .dp-row span{font-size:11.5px;padding:4px 8px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.data-panel .dp-row:hover span{color:var(--text);}
+
+@media(max-width:700px){h1{font-size:24px;}.g2,.g3,.g4{grid-template-columns:1fr;}.page{padding:18px 12px 60px;}.nav-tab{font-size:10px;padding:5px 8px;}}
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <div class="nav-brand">
+    <span class="nav-logo">📊</span>
+    <span class="nav-title">Advanced Excel — 3-Hour Session</span>
+    <span class="nav-badge">Superstore Dataset</span>
+  </div>
+  <div class="nav-tabs" id="navTabs"></div>
+</nav>
+<div class="pages-wrap">
+
+<div class="page" id="page-0"><div class="pg">
+<h1>Advanced Excel Masterclass</h1>
+<p class="sub">From raw sales data to insights — a 3-hour deep dive using the Superstore dataset. Pivot Tables, Charts, Multi-sheet workflows, and beyond.</p>
+
+<h2>Session Agenda</h2>
+<div class="tl-wrap">
+  <div class="tl-item"><div class="tl-time">0:00 – 0:35</div><div class="tl-title">Module 1 — Pivot Tables</div><div class="tl-desc">Build, configure, filter, sort, and group Pivot Tables on Superstore sales data</div></div>
+  <div class="tl-item"><div class="tl-time">0:35 – 1:05</div><div class="tl-title">Module 2 — Data Analysis: Trends & Patterns</div><div class="tl-desc">IF-based categorization, Sales Trend column, Conditional Formatting on data</div></div>
+  <div class="tl-item"><div class="tl-time">1:05 – 1:50</div><div class="tl-title">Module 3 — Data Visualization</div><div class="tl-desc">Column, Line, Pie, Bar, Area, Scatter charts — built from Superstore data</div></div>
+  <div class="tl-item"><div class="tl-time">1:50 – 2:10</div><div class="tl-title">Module 4 — Multiple Worksheets</div><div class="tl-desc">Create, rename, group, protect sheets; keyboard navigation between sheets</div></div>
+  <div class="tl-item"><div class="tl-time">2:10 – 2:25</div><div class="tl-title">Module 5 — Linking & Cross-Sheet References</div><div class="tl-desc">Sheet!Cell syntax, dynamic cross-sheet dashboards, 3D formulas</div></div>
+  <div class="tl-item"><div class="tl-time">2:25 – 2:40</div><div class="tl-title">⭐ Add-on Topics</div><div class="tl-desc">Slicers, Calculated Fields, Power Query intro, Sparklines, Named Tables</div></div>
+  <div class="tl-item"><div class="tl-time">2:40 – 3:00</div><div class="tl-title">Workshop + Quiz</div><div class="tl-desc">3 hands-on tasks on Superstore + 10-question knowledge check</div></div>
+</div>
+
+<h2>The Superstore Dataset</h2>
+<div class="bds">
+  <div class="bd"><div class="v">4,000</div><div class="l">Orders</div></div>
+  <div class="bd"><div class="v">21</div><div class="l">Columns</div></div>
+  <div class="bd"><div class="v">$923K</div><div class="l">Total Sales</div></div>
+  <div class="bd"><div class="v">$95K</div><div class="l">Total Profit</div></div>
+  <div class="bd"><div class="v">2014–17</div><div class="l">Date Range</div></div>
+  <div class="bd"><div class="v">4</div><div class="l">Regions</div></div>
+</div>
+
+<div class="ex"><div class="et">📂 Column Map — Know your data</div>
+<table class="tb">
+  <tr><th>Column</th><th>Type</th><th>Example</th><th>Used For</th></tr>
+  <tr><td>Order ID</td><td>Text</td><td>CA-2016-152156</td><td>Unique identifier</td></tr>
+  <tr><td>Order Date / Ship Date</td><td>Date</td><td>08-Nov-2016</td><td>Time-based analysis</td></tr>
+  <tr><td>Ship Mode</td><td>Text</td><td>Second Class</td><td>Filter/Group</td></tr>
+  <tr><td>Customer Name / Segment</td><td>Text</td><td>Consumer, Corporate, Home Office</td><td>Pivot rows/columns</td></tr>
+  <tr><td>Region / State / City</td><td>Text</td><td>West, California, Los Angeles</td><td>Geographic analysis</td></tr>
+  <tr><td>Category / Sub-Category</td><td>Text</td><td>Technology → Phones</td><td>Product drill-down</td></tr>
+  <tr><td>Sales / Quantity / Discount / Profit</td><td>Number</td><td>261.96 / 2 / 0 / 41.91</td><td>Calculations &amp; charts</td></tr>
+</table>
+</div>
+
+<div class="cd hl"><span class="tg am">Real Insight From This Data</span>
+<div class="g3">
+  <div><p style="font-size:13px;color:var(--muted);">Top Category by Sales</p><p style="font-size:18px;font-weight:700;color:var(--accent);">Technology</p><p style="font-size:12px;color:var(--muted);">$347K (37.7%)</p></div>
+  <div><p style="font-size:13px;color:var(--muted);">Most Profitable Category</p><p style="font-size:18px;font-weight:700;color:var(--green);">Office Supplies</p><p style="font-size:12px;color:var(--muted);">$45K profit</p></div>
+  <div><p style="font-size:13px;color:var(--muted);">Worst Margin</p><p style="font-size:18px;font-weight:700;color:var(--coral);">Furniture</p><p style="font-size:12px;color:var(--muted);">Only $5K on $293K sales!</p></div>
+</div>
+</div>
+</div></div>
+
+<div class="page" id="page-1"><div class="pg">
+<h1>Pivot Tables</h1>
+<p class="sub">The single most powerful feature in Excel. Summarize 4,000 rows into any view you need — in under 60 seconds, with no formulas.</p>
+
+<h2>What Is a Pivot Table?</h2>
+<div class="cd hl"><span class="tg am">The Core Idea</span>
+<p>A Pivot Table takes your raw data and lets you <strong>reorganize</strong> it by dragging fields into four zones. Excel calculates all the totals automatically. You answer questions like "Total sales by Category by Year" without writing a single SUM formula.</p></div>
+
+<div class="ex"><div class="et">🏪 Superstore — Analogy</div>
+<p>Imagine 4,000 receipts on the floor. A Pivot Table is the machine that automatically sorts them into piles by Category, adds up each pile, and compares them side by side — in seconds.</p></div>
+
+<h2>The 4 Zones</h2>
+<div class="g2">
+  <div class="cd tl"><span class="tg tl">Rows</span><p>Each unique value in this field becomes a row. <strong>Example:</strong> drag "Category" here → you get 3 rows: Furniture, Office Supplies, Technology.</p></div>
+  <div class="cd pp"><span class="tg pp">Columns</span><p>Each unique value becomes a column. <strong>Example:</strong> drag "Year" here → you get columns 2014, 2015, 2016, 2017 side by side.</p></div>
+  <div class="cd hl"><span class="tg am">Values</span><p>The numbers to calculate. <strong>Example:</strong> drag "Sales" here → it sums Sales for every Row × Column combination.</p></div>
+  <div class="cd gn"><span class="tg gn">Filters</span><p>A global filter on top. <strong>Example:</strong> drag "Region" here → a dropdown lets you see only West sales.</p></div>
+</div>
+
+<h2>Build Your First Pivot — Step by Step</h2>
+<ol class="st">
+  <li>Click any cell inside your data table (Main_Order sheet)</li>
+  <li>Go to <strong>Insert tab → Pivot Table</strong></li>
+  <li>Choose "New Worksheet" → Click OK — Excel creates a blank Pivot on a new sheet</li>
+  <li>In the Field List panel on the right, drag <strong>Category</strong> to Rows</li>
+  <li>Drag <strong>Sales</strong> to Values — it auto-sums</li>
+  <li>Drag <strong>Region</strong> to Columns — now you see sales per category per region</li>
+</ol>
+
+<h2>Result: Category vs Region Sales</h2>
+<div class="pvt">
+  <div class="pvt-hdr" style="grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;">
+    <div>Category</div><div>Central</div><div>East</div><div>South</div><div>West</div>
+  </div>
+  <div class="pvt-row" style="grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;">
+    <div>Furniture</div><div>$61,145</div><div>$86,614</div><div>$46,673</div><div>$98,569</div>
+  </div>
+  <div class="pvt-row" style="grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;">
+    <div>Office Supplies</div><div>$55,617</div><div>$83,153</div><div>$43,896</div><div>$99,857</div>
+  </div>
+  <div class="pvt-row" style="grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;">
+    <div>Technology</div><div>$81,955</div><div>$90,224</div><div>$81,987</div><div>$93,612</div>
+  </div>
+  <div class="pvt-row total" style="grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;">
+    <div>Grand Total</div><div>$198,717</div><div>$259,991</div><div>$172,556</div><div>$292,038</div>
+  </div>
+</div>
+
+<h2>Filtering and Sorting in Pivot Tables</h2>
+<div class="g2">
+  <div class="cd"><span class="tg am">Filter a Pivot</span>
+  <ol class="st">
+    <li>Click the dropdown arrow on a Row or Column label</li>
+    <li>Untick values you don't want (e.g., hide "Furniture")</li>
+    <li>Or use "Label Filters" / "Value Filters" for advanced options</li>
+  </ol>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:8px;">Value Filter example: Show only categories where Sales &gt; $300,000</p>
+  </div>
+  <div class="cd"><span class="tg tl">Sort a Pivot</span>
+  <ol class="st">
+    <li>Click any value cell in the Sales column</li>
+    <li>Data tab → Sort Largest to Smallest</li>
+    <li>Or right-click → Sort → Sort Largest to Smallest</li>
+  </ol>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:8px;">The whole row moves together — your Category labels stay aligned.</p>
+  </div>
+</div>
+
+<h2>Group Dates by Year / Quarter / Month</h2>
+<div class="cd or"><span class="tg or">Date Grouping — Most Powerful Pivot Feature</span>
+<p>Drag <strong>Order Date</strong> to Rows. Excel shows individual dates (too granular). Right-click any date → <strong>Group</strong> → tick <strong>Years</strong> and <strong>Quarters</strong> → OK. Now you see yearly and quarterly totals instantly.</p>
+<div class="co"><code>Rows: Order Date (grouped by Year → Quarter)
+Values: Sum of Sales, Sum of Profit
+
+Result:
+2014  →  Q1: $48K  Q2: $52K  Q3: $65K  Q4: $63K
+2015  →  Q1: $41K  Q2: $44K  Q3: $55K  Q4: $51K
+2016  →  growing trend visible
+2017  →  Q4 spike — holiday shopping</code></div>
+</div>
+
+<h2>Refreshing Your Pivot</h2>
+<div class="cd bl"><span class="tg bl">Always Refresh When Source Data Changes</span>
+<p>Pivot Tables do <strong>not</strong> update automatically when you change the raw data. After editing the source: right-click the Pivot → <strong>Refresh</strong>, or go to PivotTable Analyze tab → Refresh.</p>
+<p style="color:var(--muted);font-size:12.5px;margin-top:6px;">To auto-refresh on open: PivotTable Options → Data → tick "Refresh data when opening the file"</p>
+</div>
+
+<h2>Value Field Settings — Change Sum to Count/Average</h2>
+<ol class="st">
+  <li>Click any value cell in the Pivot (e.g., a Sales cell)</li>
+  <li>Right-click → <strong>Value Field Settings</strong></li>
+  <li>Choose: Sum, Count, Average, Max, Min, % of Column Total, % of Row Total</li>
+  <li>Click OK — all values update instantly</li>
+</ol>
+<p>Example: Change Sales from Sum to <strong>% of Column Total</strong> → instantly see what % each category is of the regional total.</p>
+</div></div>
+
+<div class="page" id="page-2"><div class="pg">
+<h1>Data Analysis: Trends & Patterns</h1>
+<p class="sub">Raw numbers don't tell stories — patterns do. Learn to categorize, tag, and flag data so trends become visible immediately.</p>
+
+<h2>Step 1: Add a Sales Category Column</h2>
+<p>The Superstore data has a Sales column but no label for "how big" each sale is. We'll add one using IF.</p>
+<div class="fm">=IF(Sales &gt; 500, "High", IF(Sales &gt; 100, "Medium", "Low"))</div>
+
+<div class="ex"><div class="et">📊 Applied to Superstore — Column Q (Sales Trend)</div>
+<div class="co"><code>Row 2: Sales = 261.96  → =IF(R2>500,"High",IF(R2>100,"Medium","Low"))
+Result: "Medium"
+
+Row 3: Sales = 731.94  → =IF(R3>500,"High",IF(R3>100,"Medium","Low"))
+Result: "High"
+
+Row 4: Sales = 14.62   → =IF(R4>500,"High",IF(R4>100,"Medium","Low"))
+Result: "Low"</code></div>
+<p>Once the column is filled (use Fill Handle to copy down all 4000 rows), you can Pivot by this new "Sales Trend" column to count High/Medium/Low orders per category.</p>
+</div>
+
+<h2>Profit Margin Analysis</h2>
+<div class="cd tl"><span class="tg tl">Add Profit Margin Column</span>
+<div class="co"><code>=IF(S2=0, 0, T2/S2)    ← Profit / Sales = Margin %
+
+Format as percentage. Then add a flag:
+=IF(T2/S2 < 0, "Loss", IF(T2/S2 < 0.1, "Low Margin", "Healthy"))
+
+Superstore insight:
+Furniture category → many rows show negative profit margin!
+Tables sub-category → worst offender with consistent losses.</code></div>
+</div>
+
+<h2>Year-over-Year Growth</h2>
+<div class="cd pp"><span class="tg pp">Trend Column — Using Pivot Output</span>
+<p>After building a Pivot of Sales by Year, in a new column beside it:</p>
+<div class="co"><code>2014 Sales: $228,784  (baseline)
+2015 Sales: $190,978  → =(C3-C2)/C2 = -16.5%  ← decline!
+2016 Sales: $215,966  → =(C4-C3)/C3 = +13.1%  ← recovery
+2017 Sales: $287,576  → =(C5-C4)/C4 = +33.1%  ← strong growth
+
+Format as percentage. Insight: 2015 dip then strong recovery.</code></div>
+</div>
+
+<h2>Discount Impact Analysis</h2>
+<div class="ex"><div class="et">💡 Do discounts hurt profit? Let's find out.</div>
+<div class="co"><code>Add a Discount Bucket column:
+=IF(S2=0,"No Discount",IF(S2<=0.2,"Low (0-20%)",IF(S2<=0.4,"Medium (20-40%)","High (40%+)")))
+
+Then build a Pivot:
+Rows: Discount Bucket
+Values: Average of Profit Margin (%)
+
+Result typically shows:
+No Discount    → +18% avg margin
+Low Discount   → +12% avg margin
+Medium Discount → +3% avg margin
+High Discount  → -8% avg margin  ← losing money!</code></div>
+<p>This kind of analysis — using IF bucketing + Pivot — is what turns Excel from a spreadsheet tool into a business intelligence tool.</p>
+</div>
+
+<h2>COUNTIFS and SUMIFS for Pattern Detection</h2>
+<p>Sometimes you need answers without building a full Pivot. SUMIFS and COUNTIFS let you ask targeted questions.</p>
+<div class="co"><code>=SUMIFS(Sales, Category, "Technology", Region, "West")
+→ Total Technology sales in the West region only
+
+=COUNTIFS(Category, "Furniture", Profit, "<0")
+→ How many Furniture orders had a loss (negative profit)?
+
+=AVERAGEIFS(Profit, Category, "Technology", Year, 2017)
+→ Average profit of Technology orders in 2017 only</code></div>
+
+<h2>Moving Average — Smooth Out Noise</h2>
+<div class="cd or"><span class="tg or">3-Month Moving Average for Sales Trend</span>
+<div class="co"><code>After grouping sales by month in a Pivot and copying values out:
+
+=AVERAGE(B2:B4)   ← Months 1-3
+=AVERAGE(B3:B5)   ← Months 2-4 (shift down by 1)
+=AVERAGE(B4:B6)   ← Months 3-5
+
+This smooths out monthly spikes and shows the underlying trend.
+Plot original monthly sales vs moving average on the same Line Chart
+— the pattern becomes clear even with noisy data.</code></div>
+</div>
+
+<h2>Key Questions to Answer With This Data</h2>
+<table class="tb">
+  <tr><th>Business Question</th><th>Method</th><th>Finding</th></tr>
+  <tr><td>Which category is most profitable?</td><td>Pivot: Category vs Sum of Profit</td><td>Office Supplies ($45K)</td></tr>
+  <tr><td>Which region grows fastest?</td><td>Pivot by Year + Region, add YoY%</td><td>West region strongest</td></tr>
+  <tr><td>Do discounts help or hurt?</td><td>IF bucket + AVERAGEIFS on margin</td><td>High discounts lose money</td></tr>
+  <tr><td>Best month for sales?</td><td>Pivot: Group dates by Month</td><td>November/December peak</td></tr>
+  <tr><td>Which sub-category loses money?</td><td>COUNTIFS(Profit,"&lt;0") by sub-cat</td><td>Tables, Bookcases</td></tr>
+</table>
+</div></div>
+
+<div class="page" id="page-3"><div class="pg">
+<h1>Data Visualization in Excel</h1>
+<p class="sub">The right chart turns numbers into decisions. Six chart types — when to use each, how to build it, and how to make it presentation-ready.</p>
+
+<h2>The Golden Rule of Charts</h2>
+<div class="cd hl"><span class="tg am">Match Chart Type to Your Question</span>
+<table class="tb">
+  <tr><th>If you want to show...</th><th>Use this chart</th><th>Example</th></tr>
+  <tr><td>Compare values across categories</td><td>Column or Bar Chart</td><td>Sales by Category</td></tr>
+  <tr><td>Change over time</td><td>Line Chart</td><td>Monthly sales 2014–2017</td></tr>
+  <tr><td>Part-of-whole / percentages</td><td>Pie Chart</td><td>Revenue share by segment</td></tr>
+  <tr><td>Cumulative totals over time</td><td>Area Chart</td><td>Cumulative sales growth</td></tr>
+  <tr><td>Relationship between two numbers</td><td>Scatter Plot</td><td>Sales vs Profit correlation</td></tr>
+</table>
+</div>
+
+<h2>How to Create Any Chart — Universal Steps</h2>
+<ol class="st">
+  <li>Select the data range you want to chart (including headers)</li>
+  <li>Go to <strong>Insert tab → Charts group</strong></li>
+  <li>Click the chart type icon or click "Recommended Charts" to let Excel suggest</li>
+  <li>Chart appears — now customize it</li>
+  <li>Click the chart → use <strong>Chart Design</strong> and <strong>Format</strong> tabs that appear</li>
+</ol>
+
+<h2>Column Chart — Sales by Category</h2>
+<div class="g2">
+  <div class="cd bl"><span class="tg bl">Build It</span>
+  <ol class="st">
+    <li>In a Pivot: Rows = Category, Values = Sum of Sales</li>
+    <li>Select the Pivot table (A3:B6)</li>
+    <li>Insert → Clustered Column Chart</li>
+    <li>Add chart title: "Sales by Category"</li>
+    <li>Right-click bars → Add Data Labels</li>
+  </ol>
+  </div>
+  <div class="chart-mock">
+    <div class="chart-title">Sales by Category ($)</div>
+    <div class="bar-wrap">
+      <div style="flex-direction:column;display:flex;align-items:center;flex:1;">
+        <div class="bar" style="height:60px;width:100%;background:linear-gradient(180deg,#f59e0b,#d97706);"></div>
+        <div class="bar-label">Furniture<br>$293K</div>
+      </div>
+      <div style="flex-direction:column;display:flex;align-items:center;flex:1;">
+        <div class="bar" style="height:58px;width:100%;background:linear-gradient(180deg,#3b82f6,#2563eb);"></div>
+        <div class="bar-label">Office Sup.<br>$283K</div>
+      </div>
+      <div style="flex-direction:column;display:flex;align-items:center;flex:1;">
+        <div class="bar" style="height:72px;width:100%;background:linear-gradient(180deg,#14b8a6,#0d9488);"></div>
+        <div class="bar-label">Technology<br>$348K</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cd pp"><span class="tg pp">Customize to Make It Professional</span>
+<div class="co"><code>1. Chart Title: double-click "Chart Title" → type "Sales by Category — Superstore 2014-2017"
+2. Change bar colors: right-click bar → Format Data Series → Fill → choose color
+3. Add data labels: right-click bars → Add Data Labels → Format → Number → $#,##0
+4. Remove gridlines: click gridlines → Delete (cleaner look)
+5. Resize: drag chart corners to make it bigger for presentations</code></div>
+</div>
+
+<h2>Line Chart — Sales Trend Over Time</h2>
+<div class="ex"><div class="et">📈 Build a Sales Trend Line</div>
+<ol class="st">
+  <li>Build a Pivot: Rows = Order Date (grouped by Year), Values = Sum of Sales</li>
+  <li>Copy the Year and Sales columns to a clean area</li>
+  <li>Select both columns → Insert → Line Chart → Line with Markers</li>
+  <li>Add a Trendline: right-click the line → Add Trendline → Linear</li>
+</ol>
+<div class="chart-mock">
+  <div class="chart-title">Annual Sales Trend 2014–2017</div>
+  <svg class="line-svg" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+    <polyline points="30,30 110,55 190,38 270,12" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+    <circle cx="30" cy="30" r="4" fill="#f59e0b"/>
+    <circle cx="110" cy="55" r="4" fill="#f59e0b"/>
+    <circle cx="190" cy="38" r="4" fill="#f59e0b"/>
+    <circle cx="270" cy="12" r="4" fill="#f59e0b"/>
+    <text x="30" y="72" font-size="9" fill="#6b7f96" text-anchor="middle">2014</text>
+    <text x="110" y="72" font-size="9" fill="#6b7f96" text-anchor="middle">2015</text>
+    <text x="190" y="72" font-size="9" fill="#6b7f96" text-anchor="middle">2016</text>
+    <text x="270" y="72" font-size="9" fill="#6b7f96" text-anchor="middle">2017</text>
+    <text x="30" y="22" font-size="8" fill="#f59e0b">$229K</text>
+    <text x="110" y="47" font-size="8" fill="#f59e0b">$191K</text>
+    <text x="190" y="30" font-size="8" fill="#f59e0b">$216K</text>
+    <text x="270" y="7" font-size="8" fill="#f59e0b">$288K</text>
+    <line x1="0" y1="65" x2="300" y2="65" stroke="#1a2d42" stroke-width="1"/>
+  </svg>
+</div>
+</div>
+
+<h2>Pie Chart — Segment Revenue Share</h2>
+<div class="g2">
+  <div class="cd tl"><span class="tg tl">Build It</span>
+  <ol class="st">
+    <li>Pivot: Rows = Segment, Values = Sum of Sales</li>
+    <li>Select Segment + Sales data</li>
+    <li>Insert → Pie Chart → 2D Pie</li>
+    <li>Right-click → Add Data Labels → Format → "Category Name" + "Percentage"</li>
+    <li>Explode a slice: click the pie → click one slice → drag it out slightly</li>
+  </ol>
+  </div>
+  <div class="cd or"><span class="tg or">Superstore Segments</span>
+  <div style="margin-top:8px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:14px;height:14px;border-radius:50%;background:var(--accent);"></div><p style="font-size:13px;margin:0;">Consumer — $450K <span style="color:var(--muted);">(48.8%)</span></p></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="width:14px;height:14px;border-radius:50%;background:var(--accent2);"></div><p style="font-size:13px;margin:0;">Corporate — $272K <span style="color:var(--muted);">(29.5%)</span></p></div>
+    <div style="display:flex;align-items:center;gap:10px;"><div style="width:14px;height:14px;border-radius:50%;background:var(--teal);"></div><p style="font-size:13px;margin:0;">Home Office — $201K <span style="color:var(--muted);">(21.8%)</span></p></div>
+  </div>
+  </div>
+</div>
+
+<h2>Bar Chart — Horizontal for Long Category Names</h2>
+<div class="cd gn"><span class="tg gn">When to Use Bar vs Column</span>
+<p>Use <strong>Bar Charts</strong> (horizontal) when your category names are long (like sub-category names: "Office Supplies", "Copiers", "Accessories"). They read much better horizontally.</p>
+<p>Build it: Pivot by Sub-Category → Sum of Profit → Insert → Bar Chart. You'll instantly see that <strong>Copiers</strong> has the highest profit and <strong>Tables</strong> and <strong>Bookcases</strong> have negative profit (bars go left of zero).</p>
+</div>
+
+<h2>Area Chart — Cumulative or Stacked Sales</h2>
+<div class="cd bl"><span class="tg bl">Stacked Area = Show composition over time</span>
+<ol class="st">
+  <li>Pivot: Rows = Year, Columns = Category, Values = Sum of Sales</li>
+  <li>Select the full Pivot output</li>
+  <li>Insert → Area Chart → Stacked Area</li>
+  <li>You see how each category contributes to total sales each year</li>
+</ol>
+<p style="font-size:12.5px;color:var(--muted);">Insight: Technology's area grows visibly over time — it's driving overall sales growth.</p>
+</div>
+
+<h2>Scatter Plot — Sales vs Profit Relationship</h2>
+<div class="ex"><div class="et">🔍 Does high sales always mean high profit?</div>
+<ol class="st">
+  <li>Select the Sales column (Q) and Profit column (T) together — hold Ctrl to select both</li>
+  <li>Insert → Scatter → Scatter with only Markers</li>
+  <li>Label axes: Sales on X-axis, Profit on Y-axis</li>
+  <li>Add Trendline → Linear → tick "Display R² value"</li>
+</ol>
+<p>You'll see: most dots cluster in the low-sales, low-profit area. But some high-sales orders have <strong>negative profit</strong> — those are the discounted orders that lost money despite high revenue.</p>
+</div>
+</div></div>
+
+<div class="page" id="page-4"><div class="pg">
+<h1>Working With Multiple Worksheets</h1>
+<p class="sub">The Superstore file itself has 9 sheets — one per chart type. Understanding how to manage, navigate, and organize multiple sheets is essential for real-world Excel work.</p>
+
+<h2>Sheet Basics</h2>
+<div class="g2">
+  <div class="cd hl"><span class="tg am">Create a Sheet</span>
+  <p>Click the <strong>+</strong> icon at the bottom tab bar. Or right-click any sheet tab → Insert → Worksheet.</p>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px;">The Superstore file: Main_Order, Sales Trend, Column Chart, Line Graph, Pie Chart, Bar Graph, Area Chart, Scatter Graph, Linking — each sheet holds its own analysis.</p>
+  </div>
+  <div class="cd tl"><span class="tg tl">Rename a Sheet</span>
+  <p>Double-click the sheet tab → type the new name → Enter.</p>
+  <p>Or right-click → Rename.</p>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px;">Good naming: "Sales_2017", "Pivot_Region" — avoid spaces in names you'll reference in formulas.</p>
+  </div>
+  <div class="cd pp"><span class="tg pp">Move or Copy</span>
+  <p>Right-click a sheet tab → Move or Copy → choose position → tick "Create a copy" if needed.</p>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px;">Useful for creating a "template" sheet and copying it for each month/region.</p>
+  </div>
+  <div class="cd bl"><span class="tg bl">Color-Code Tabs</span>
+  <p>Right-click tab → Tab Color → pick a color. Use colors to group related sheets (e.g., all chart sheets in blue, data sheets in orange).</p>
+  </div>
+</div>
+
+<h2>Navigating Between Sheets</h2>
+<div class="g2">
+  <div class="cd">
+    <span class="tg am">Keyboard Shortcuts</span>
+    <p><span class="sc">Ctrl+Page Down</span> → next sheet</p>
+    <p><span class="sc">Ctrl+Page Up</span> → previous sheet</p>
+    <p><span class="sc">Ctrl+Click</span> tab → select multiple sheets (for grouped editing)</p>
+    <p>Right-click the navigation arrows (bottom left) → see all sheet names in a list</p>
+  </div>
+  <div class="cd"><span class="tg tl">Hyperlinks Between Sheets</span>
+  <ol class="st">
+    <li>Click the cell where you want the hyperlink</li>
+    <li>Insert → Hyperlink (or Ctrl+K)</li>
+    <li>Choose "Place in This Document"</li>
+    <li>Select the sheet and cell to jump to → OK</li>
+  </ol>
+  <p style="font-size:12.5px;color:var(--muted);">Create a "Table of Contents" sheet with hyperlinks to each analysis sheet.</p>
+  </div>
+</div>
+
+<h2>Grouping Sheets — Edit Multiple at Once</h2>
+<div class="cd or"><span class="tg or">Grouped Sheet Editing — Huge Time Saver</span>
+<p>Hold <strong>Ctrl</strong> and click multiple sheet tabs → they turn white and you're in "Group Mode". Anything you type or format now applies to ALL selected sheets simultaneously.</p>
+<div class="ex"><div class="et">Practical use:</div>
+<p>You have 4 regional sheets (North, South, East, West). You want the same header row on all of them. Group all 4 sheets → type the header once → it appears on all 4. Then ungroup: right-click any tab → Ungroup Sheets.</p>
+</div>
+<p style="color:var(--coral);font-size:12.5px;margin-top:8px;font-weight:600;">⚠️ Watch out: the title bar shows "[Group]" when sheets are grouped. Always ungroup before making sheet-specific changes!</p>
+</div>
+
+<h2>Protecting Sheets</h2>
+<div class="g2">
+  <div class="cd rd"><span class="tg rd">Protect a Worksheet</span>
+  <ol class="st">
+    <li>Review tab → Protect Sheet</li>
+    <li>Set a password (optional)</li>
+    <li>Choose what users CAN do (select cells, sort, etc.)</li>
+    <li>Click OK</li>
+  </ol>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px;">Now users can view but cannot accidentally edit formulas or delete data.</p>
+  </div>
+  <div class="cd pp"><span class="tg pp">Protect the Workbook</span>
+  <ol class="st">
+    <li>Review tab → Protect Workbook</li>
+    <li>Tick "Structure" to prevent adding/deleting/renaming sheets</li>
+    <li>Set password → OK</li>
+  </ol>
+  <p style="font-size:12.5px;color:var(--muted);margin-top:6px;">Use this when sharing final reports — recipients can view but not restructure.</p>
+  </div>
+</div>
+
+<h2>Sheet Management Best Practices</h2>
+<table class="tb">
+  <tr><th>Practice</th><th>Why It Matters</th></tr>
+  <tr><td>Keep raw data on one sheet, analysis on another</td><td>Never mix source data with calculations — easier to update</td></tr>
+  <tr><td>Name sheets meaningfully (no "Sheet1")</td><td>Cross-sheet formulas become readable: =Sales_2017!B2</td></tr>
+  <tr><td>Use a "Cover" or "Index" sheet with hyperlinks</td><td>Large workbooks become navigable for others</td></tr>
+  <tr><td>Color-code by purpose</td><td>At a glance: orange = raw data, blue = pivots, green = charts</td></tr>
+  <tr><td>Protect formula sheets before sharing</td><td>Prevent accidental deletion of complex formulas</td></tr>
+</table>
+</div></div>
+
+<div class="page" id="page-5"><div class="pg">
+<h1>Linking & Cross-Sheet References</h1>
+<p class="sub">Connect data across sheets so your summary dashboard updates automatically when source data changes — no copy-pasting ever again.</p>
+
+<h2>The Basic Syntax</h2>
+<div class="fm">= SheetName ! CellAddress</div>
+<div class="cd hl"><span class="tg am">How Cross-Sheet References Work</span>
+<div class="co"><code>In Sheet1 (Dashboard), reference Sheet2 (Data):
+
+=Sales_Data!B2          ← cell B2 from sheet named "Sales_Data"
+=Main_Order!Q2          ← Sales value from row 2 of Main_Order sheet
+='Sales Trend'!B5       ← quotes needed when sheet name has spaces
+
+When Main_Order!Q2 changes → Dashboard automatically shows new value.
+No manual update. No copy-paste.</code></div>
+</div>
+
+<h2>Building a Summary Dashboard Sheet</h2>
+<div class="ex"><div class="et">🏪 Superstore — Create a KPI Dashboard Sheet</div>
+<ol class="st">
+  <li>Create a new sheet called "Dashboard"</li>
+  <li>In B2, type: Total Sales</li>
+  <li>In C2, type the formula: <span class="sc">=SUM(Main_Order!Q:Q)</span> — this pulls the sum of the entire Sales column from Main_Order</li>
+  <li>In B3: Total Profit → C3: <span class="sc">=SUM(Main_Order!T:T)</span></li>
+  <li>In B4: Profit Margin % → C4: <span class="sc">=C3/C2</span> formatted as percentage</li>
+  <li>In B5: Order Count → C5: <span class="sc">=COUNTA(Main_Order!A:A)-1</span></li>
+</ol>
+<p>Now the Dashboard updates whenever anyone edits the Main_Order data!</p>
+</div>
+
+<div class="pvt">
+  <div class="pvt-hdr" style="grid-template-columns:1.5fr 1fr;">
+    <div>KPI</div><div>Value</div>
+  </div>
+  <div class="pvt-row" style="grid-template-columns:1.5fr 1fr;">
+    <div>=Main_Order!Total Sales</div><div style="color:var(--green);">$923,303</div>
+  </div>
+  <div class="pvt-row" style="grid-template-columns:1.5fr 1fr;">
+    <div>=Main_Order!Total Profit</div><div style="color:var(--green);">$95,154</div>
+  </div>
+  <div class="pvt-row" style="grid-template-columns:1.5fr 1fr;">
+    <div>=Profit / Sales</div><div style="color:var(--teal);">10.3%</div>
+  </div>
+  <div class="pvt-row" style="grid-template-columns:1.5fr 1fr;">
+    <div>=COUNTA(Order IDs) - 1</div><div style="color:var(--accent);">4,000</div>
+  </div>
+</div>
+
+<h2>Pulling Specific Values with Cross-Sheet VLOOKUP</h2>
+<div class="cd bl"><span class="tg bl">VLOOKUP Across Sheets</span>
+<div class="co"><code>On Dashboard sheet, look up a category's sales from Main_Order:
+
+=VLOOKUP("Technology", Main_Order!N:Q, 4, FALSE)
+                          ↑              ↑
+                    Search col N      Return col Q (Sales)
+                    (Category)        (4 columns from N)
+
+Or reference another sheet's Pivot output:
+=VLOOKUP(A2, 'Pivot_Results'!$A$1:$B$10, 2, FALSE)
+→ pulls the sales figure for whatever category is in A2</code></div>
+</div>
+
+<h2>3D Formulas — Same Cell Across Multiple Sheets</h2>
+<div class="cd pp"><span class="tg pp">Add Up the Same Cell Across Many Sheets</span>
+<p>If you have 12 monthly sheets (Jan, Feb, Mar...) each with Total Sales in cell B2:</p>
+<div class="co"><code>=SUM(Jan:Dec!B2)
+→ Adds cell B2 from ALL sheets between Jan and Dec tabs
+
+Works with AVERAGE, COUNT, MAX, MIN too:
+=AVERAGE(Jan:Dec!B2)  → average monthly sales
+=MAX(Jan:Dec!B2)      → best month
+
+Key: sheets must be adjacent tabs — the formula covers everything between the two named sheets.</code></div>
+</div>
+
+<h2>Linking Data — The Superstore "Linking" Sheet</h2>
+<div class="ex"><div class="et">📋 The Linking sheet in Superstore_Final.xls</div>
+<ol class="st">
+  <li>Open the "Linking" sheet — it has a summary table referencing Main_Order data</li>
+  <li>Click any cell that shows a value — check the Formula Bar to see the cross-sheet reference</li>
+  <li>The date format may need fixing: select date column → Ctrl+1 → Number → Date → choose format</li>
+  <li>Practice: create a new row that uses =Main_Order!Q2 to pull a specific sales value</li>
+</ol>
+</div>
+
+<h2>Useful Cross-Sheet Patterns</h2>
+<table class="tb">
+  <tr><th>Pattern</th><th>Formula</th><th>Use Case</th></tr>
+  <tr><td>Pull single value</td><td>=Sheet2!B5</td><td>Dashboard KPIs</td></tr>
+  <tr><td>Sum entire column</td><td>=SUM(Sheet2!C:C)</td><td>Total from another sheet</td></tr>
+  <tr><td>3D sum across sheets</td><td>=SUM(Jan:Dec!B2)</td><td>Monthly rollup</td></tr>
+  <tr><td>VLOOKUP across sheet</td><td>=VLOOKUP(A1,Sheet2!A:D,4,FALSE)</td><td>Cross-sheet lookup</td></tr>
+  <tr><td>COUNTIF across sheet</td><td>=COUNTIF(Sheet2!C:C,"West")</td><td>Count from source data</td></tr>
+</table>
+</div></div>
+
+<div class="page" id="page-6"><div class="pg">
+<h1>⭐ Bonus Add-on Topics</h1>
+<p class="sub">Five advanced features not in the original slides — each takes minutes to learn but transforms your workflow from "good" to "impressive."</p>
+
+<div class="cd addon"><span class="tg lm">Add-on Section — Power User Features</span>
+<p style="font-size:13.5px;">These topics go beyond what most Excel users know. Master even one and you'll be the most capable person in the room.</p></div>
+
+<h2>1. Slicers — Visual Pivot Filters</h2>
+<div class="cd addon"><span class="tg lm">Far Better Than Dropdown Filters</span>
+<p>Slicers are visual button panels that filter Pivot Tables. Click a button to filter — no dropdowns, no menus. Multiple users can understand the filter state at a glance.</p>
+<ol class="st">
+  <li>Click inside your Pivot Table</li>
+  <li>PivotTable Analyze tab → Insert Slicer</li>
+  <li>Tick: Region, Category, Segment → OK</li>
+  <li>Three floating panels appear — click "West" in Region slicer → Pivot instantly filters to West only</li>
+  <li>Hold Ctrl and click multiple buttons for multi-select</li>
+</ol>
+<div class="co"><code>Connect one Slicer to MULTIPLE Pivot Tables:
+Right-click the Slicer → Report Connections
+Tick all Pivots you want this Slicer to control → OK
+Now one click filters all connected Pivots simultaneously — dashboard behaviour!</code></div>
+</div>
+
+<h2>2. Calculated Fields in Pivot Tables</h2>
+<div class="cd addon"><span class="tg lm">Add Formulas Inside a Pivot</span>
+<p>A calculated field lets you create a new column in a Pivot using a formula on existing fields — without touching the source data.</p>
+<ol class="st">
+  <li>Click inside your Pivot Table</li>
+  <li>PivotTable Analyze tab → Fields, Items & Sets → Calculated Field</li>
+  <li>Name: "Profit Margin %"</li>
+  <li>Formula: <span class="sc">= Profit / Sales</span></li>
+  <li>Click Add → OK</li>
+</ol>
+<div class="co"><code>Now "Profit Margin %" appears in your Pivot's Values area.
+Format as percentage.
+
+More useful calculated fields:
+= Sales / Quantity         → Average Order Value
+= Profit / Sales           → Margin %
+= Sales * 1.1              → Projected 10% growth scenario
+= IF(Profit > 0, Sales, 0) → Sales only from profitable orders</code></div>
+</div>
+
+<h2>3. Sparklines — Tiny Charts Inside Cells</h2>
+<div class="cd addon"><span class="tg lm">Inline Mini-Charts</span>
+<p>Sparklines are miniature charts that live inside a single cell. Perfect for showing trend direction next to each row in a table — no separate chart needed.</p>
+<ol class="st">
+  <li>Set up a table: regions as rows, years (2014-2017) as columns with sales values</li>
+  <li>Select the cell where you want the sparkline (e.g., F2)</li>
+  <li>Insert tab → Sparklines → Line</li>
+  <li>Data Range: select the 4 year values for that row (B2:E2)</li>
+  <li>OK → a tiny line chart appears in F2</li>
+  <li>Copy F2 down to F3, F4, F5 — each row gets its own sparkline</li>
+</ol>
+<div class="co"><code>Region   2014    2015    2016    2017   Trend
+West     $68K    $61K    $75K    $88K   ↗ (sparkline here)
+East     $55K    $52K    $61K    $92K   ↗
+Central  $49K    $38K    $50K    $62K   ↗
+South    $57K    $40K    $30K    $46K   ↘ (different shape!)</code></div>
+</div>
+
+<h2>4. Power Query — Automated Data Cleaning</h2>
+<div class="cd addon"><span class="tg lm">No More Manual Cleaning</span>
+<p>Power Query (Get & Transform) records every cleaning step you do and replays them automatically on new data. It's like a macro for data cleaning but visual and no-code.</p>
+<ol class="st">
+  <li>Data tab → Get Data → From File → From Workbook (or From Table/Range for existing data)</li>
+  <li>Power Query Editor opens — your data appears as a preview</li>
+  <li>Every transformation you make is recorded as a "Step" in the right panel</li>
+  <li>Remove columns: right-click column header → Remove</li>
+  <li>Split column: Home → Split Column → By Delimiter</li>
+  <li>Replace values: right-click → Replace Values</li>
+  <li>When done: Home → Close & Load → data lands in Excel, cleaned</li>
+</ol>
+<div class="co"><code>Next time you get new Superstore data:
+Data tab → Refresh All
+Power Query replays ALL your cleaning steps automatically.
+No manual work. Consistent every time.</code></div>
+</div>
+
+<h2>5. Named Tables — The Foundation of Good Excel</h2>
+<div class="cd addon"><span class="tg lm">Structured References = Professional Excel</span>
+<p>When you convert your data to a Table (Ctrl+T), formulas can reference it by column name instead of cell address. These are called structured references and they're far more readable.</p>
+<div class="co"><code>Without Named Table:
+=SUMIF($D$2:$D$4001,"Technology",$Q$2:$Q$4001)
+
+With Named Table (table called "Superstore"):
+=SUMIF(Superstore[Category],"Technology",Superstore[Sales])
+
+The second formula is self-documenting. Anyone reading it immediately
+understands: sum Sales where Category = Technology.
+
+Also: tables auto-expand when you add rows — formulas update automatically.</code></div>
+</div>
+</div></div>
+
+<div class="page" id="page-7"><div class="pg">
+<h1>Hands-On Workshop</h1>
+<p class="sub">Three exercises using the Superstore dataset — increasing in difficulty. Open Superstore_Final.xls alongside this page.</p>
+
+<div class="ws-card">
+  <div class="ws-head"><div class="ws-num">1</div><div><div class="ws-title">Pivot Table Analysis — Sales & Profit Dashboard</div><div class="ws-time">⏱ 15 minutes | Sheet: Main_Order</div></div></div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:10px;">Build a series of Pivot Tables to answer key business questions about the Superstore data.</p>
+  <ul class="ws-tasks">
+    <li><strong>Task 1:</strong> Category vs Region — Pivot: Rows=Category, Columns=Region, Values=Sum of Sales. Which region drives most Technology revenue?</li>
+    <li><strong>Task 2:</strong> Year-over-Year — Drag Order Date to Rows, group by Year. Add Sales and Profit to Values. Which year had the best profit margin?</li>
+    <li><strong>Task 3:</strong> Sub-Category drill-down — Pivot: Rows=Sub-Category, Values=Sum of Profit sorted Smallest to Largest. Identify the 3 worst-performing sub-categories.</li>
+    <li><strong>Task 4:</strong> Ship Mode analysis — Pivot: Rows=Ship Mode, Values=Count of Order ID + Average of Sales. What is the average order size for Same Day shipping?</li>
+    <li><strong>Bonus:</strong> Add a Slicer for Region and connect it to all 4 Pivots above. Filter to West region only — what changes?</li>
+  </ul>
+  <div class="cd tl" style="margin-top:12px;"><span class="tg tl">Expected Findings</span>
+  <div class="co"><code>Worst sub-categories by profit: Tables, Bookcases, Supplies (negative!)
+Best year margin: 2017 (despite highest sales, margin improved)
+Same Day shipping: highest avg order value (~$320 vs $230 Standard)
+West region: strongest overall, Technology is the top category</code></div>
+  </div>
+</div>
+
+<div class="ws-card">
+  <div class="ws-head"><div class="ws-num">2</div><div><div class="ws-title">Chart Dashboard — Visualize the Story</div><div class="ws-time">⏱ 15 minutes | Sheets: Column Chart, Line Graph, Scatter Graph</div></div></div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:10px;">Build 3 charts on separate sheets, each telling a different story from the data.</p>
+  <ul class="ws-tasks">
+    <li><strong>Chart 1 — Column Chart:</strong> Sales by Category (Furniture, Office Supplies, Technology). Add data labels formatted as $#,##0. Change each bar to a different color. Add title: "Superstore Sales by Category"</li>
+    <li><strong>Chart 2 — Line Chart:</strong> Annual Sales 2014–2017 with a trendline. Group Order Date by Year in a Pivot, copy to a clean area, build Line with Markers. Add a linear trendline — does it show overall growth?</li>
+    <li><strong>Chart 3 — Scatter Plot:</strong> Select Sales (col Q) and Profit (col T) from Main_Order. Insert Scatter. Add trendline + R² value. Look for negative-profit, high-sales outliers — these are over-discounted orders.</li>
+    <li><strong>Bonus:</strong> Add a Pie Chart for Segment revenue share (Consumer/Corporate/Home Office) with percentage data labels. Which segment is dominant?</li>
+  </ul>
+</div>
+
+<div class="ws-card">
+  <div class="ws-head"><div class="ws-num">3</div><div><div class="ws-title">Multi-Sheet Dashboard with Cross-References</div><div class="ws-time">⏱ 10 minutes | Create new sheets</div></div></div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:10px;">Build a 3-sheet workbook that auto-updates when source data changes.</p>
+  <ul class="ws-tasks">
+    <li><strong>Step 1:</strong> Create a sheet called "KPI_Dashboard". In column A add labels: Total Sales, Total Profit, Margin %, Order Count, Avg Order Value</li>
+    <li><strong>Step 2:</strong> In column B, write cross-sheet formulas: =SUM(Main_Order!Q:Q), =SUM(Main_Order!T:T), =B2/B1, =COUNTA(Main_Order!A:A)-1, =B1/B4</li>
+    <li><strong>Step 3:</strong> Format results: Sales/Profit as currency, Margin as %, Count as number</li>
+    <li><strong>Step 4:</strong> Create a second summary sheet "Region_Summary". Use SUMIF formulas: =SUMIF(Main_Order!L:L,"West",Main_Order!Q:Q) for each of the 4 regions</li>
+    <li><strong>Step 5:</strong> On KPI_Dashboard, add hyperlinks to both analysis sheets and the Main_Order sheet. Protect KPI_Dashboard (Review → Protect Sheet) so formulas can&apos;t be accidentally deleted.</li>
+    <li><strong>Bonus:</strong> Add Sparklines in column C of Region_Summary showing 4-year sales trend per region</li>
+  </ul>
+</div>
+
+<div class="cd gn" style="margin-top:18px;"><span class="tg gn">Workshop Completion Checklist</span>
+<div class="g2">
+  <div><p style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:6px;">Pivot Skills Used:</p>
+  <p style="font-size:12.5px;color:var(--muted);">&#9744; Build Pivot from scratch<br>&#9744; Group dates by Year/Quarter<br>&#9744; Sort Pivot values<br>&#9744; Value Field Settings (% of total)<br>&#9744; Insert Slicer<br>&#9744; Calculated Field</p></div>
+  <div><p style="font-size:13px;font-weight:600;color:var(--teal);margin-bottom:6px;">Chart & Sheet Skills Used:</p>
+  <p style="font-size:12.5px;color:var(--muted);">&#9744; Column chart with data labels<br>&#9744; Line chart with trendline<br>&#9744; Scatter with R² value<br>&#9744; Cross-sheet formula (Sheet!Cell)<br>&#9744; SUMIF across sheets<br>&#9744; Sheet protection</p></div>
+</div></div>
+</div></div>
+
+<div class="page" id="page-8"><div class="pg">
+<h1>Knowledge Check Quiz</h1>
+<p class="sub">10 questions covering Pivot Tables, Charts, Multi-sheet formulas, and Analysis. No notes!</p>
+
+<div class="qz" id="q1"><div class="qt">Q1. You drag "Order Date" to Rows in a Pivot Table and see individual dates. How do you group them by Year?</div>
+<button class="qo" onclick="chk('q1',this,false)">A) Change the number format of the date column in source data</button>
+<button class="qo" onclick="chk('q1',this,true)">B) Right-click any date in the Pivot → Group → select Years → OK</button>
+<button class="qo" onclick="chk('q1',this,false)">C) Use YEAR() formula on the source data first, then rebuild the Pivot</button>
+<button class="qo" onclick="chk('q1',this,false)">D) Pivot Tables cannot group dates</button>
+<div class="qf" id="q1f"></div></div>
+
+<div class="qz" id="q2"><div class="qt">Q2. Technology Sales in the Superstore dataset are $347,778. Furniture Sales are $293,001. But Furniture's total profit is only $5,322. What does this tell you?</div>
+<button class="qo" onclick="chk('q2',this,false)">A) Furniture is the best performing category</button>
+<button class="qo" onclick="chk('q2',this,true)">B) Furniture has very low profit margin — high revenue but almost no profit, likely due to heavy discounting or high costs</button>
+<button class="qo" onclick="chk('q2',this,false)">C) The data is incorrect</button>
+<button class="qo" onclick="chk('q2',this,false)">D) Furniture should be removed from the dataset</button>
+<div class="qf" id="q2f"></div></div>
+
+<div class="qz" id="q3"><div class="qt">Q3. You want to sum Sales from the Main_Order sheet into your Dashboard sheet. What formula do you type in Dashboard!B2?</div>
+<button class="qo" onclick="chk('q3',this,false)">A) =SUM(Q:Q)</button>
+<button class="qo" onclick="chk('q3',this,false)">B) =Main_Order.SUM(Q)</button>
+<button class="qo" onclick="chk('q3',this,true)">C) =SUM(Main_Order!Q:Q)</button>
+<button class="qo" onclick="chk('q3',this,false)">D) =PULL(Main_Order,Sales)</button>
+<div class="qf" id="q3f"></div></div>
+
+<div class="qz" id="q4"><div class="qt">Q4. You want to show "High", "Medium", or "Low" based on Sales values. Which formula correctly categorizes a sale of $250?</div>
+<button class="qo" onclick="chk('q4',this,false)">A) =CATEGORY(Q2, 500, 100)</button>
+<button class="qo" onclick="chk('q4',this,true)">B) =IF(Q2>500,"High",IF(Q2>100,"Medium","Low")) → gives "Medium"</button>
+<button class="qo" onclick="chk('q4',this,false)">C) =IF(Q2>100,"Medium","Low") → gives "Medium" but misses "High" entirely</button>
+<button class="qo" onclick="chk('q4',this,false)">D) =SWITCH(Q2,500,"High",100,"Medium","Low")</button>
+<div class="qf" id="q4f"></div></div>
+
+<div class="qz" id="q5"><div class="qt">Q5. Which chart type is BEST for showing the relationship between Sales and Profit across 4,000 orders?</div>
+<button class="qo" onclick="chk('q5',this,false)">A) Pie Chart</button>
+<button class="qo" onclick="chk('q5',this,false)">B) Column Chart</button>
+<button class="qo" onclick="chk('q5',this,true)">C) Scatter Plot — it shows each order as a dot, revealing the correlation pattern and outliers</button>
+<button class="qo" onclick="chk('q5',this,false)">D) Area Chart</button>
+<div class="qf" id="q5f"></div></div>
+
+<div class="qz" id="q6"><div class="qt">Q6. You have 12 monthly sheets (Jan to Dec) each with Total Sales in cell B5. What formula gives you the full-year total?</div>
+<button class="qo" onclick="chk('q6',this,false)">A) =SUM(Jan!B5, Feb!B5, Mar!B5 ... Dec!B5)</button>
+<button class="qo" onclick="chk('q6',this,true)">B) =SUM(Jan:Dec!B5) — a 3D formula that sums B5 across all sheets between Jan and Dec</button>
+<button class="qo" onclick="chk('q6',this,false)">C) =SUMSHEETS(B5)</button>
+<button class="qo" onclick="chk('q6',this,false)">D) You must copy values from each sheet manually</button>
+<div class="qf" id="q6f"></div></div>
+
+<div class="qz" id="q7"><div class="qt">Q7. A Pivot Table shows stale data after you updated the source. What do you do?</div>
+<button class="qo" onclick="chk('q7',this,false)">A) Delete the Pivot and rebuild it from scratch</button>
+<button class="qo" onclick="chk('q7',this,false)">B) Close and reopen the file</button>
+<button class="qo" onclick="chk('q7',this,true)">C) Right-click the Pivot → Refresh (or PivotTable Analyze tab → Refresh)</button>
+<button class="qo" onclick="chk('q7',this,false)">D) Pivot Tables update automatically — no action needed</button>
+<div class="qf" id="q7f"></div></div>
+
+<div class="qz" id="q8"><div class="qt">Q8. Which chart type is most appropriate for showing how Furniture, Office Supplies, and Technology each contribute to total annual sales (part of whole over time)?</div>
+<button class="qo" onclick="chk('q8',this,false)">A) Line Chart</button>
+<button class="qo" onclick="chk('q8',this,true)">B) Stacked Area Chart — shows each category's portion and the total, evolving over time</button>
+<button class="qo" onclick="chk('q8',this,false)">C) Scatter Plot</button>
+<button class="qo" onclick="chk('q8',this,false)">D) Pie Chart — but only if you use one pie per year</button>
+<div class="qf" id="q8f"></div></div>
+
+<div class="qz" id="q9"><div class="qt">Q9. You want to add a "Profit Margin %" column to a Pivot Table without touching the source data. What do you use?</div>
+<button class="qo" onclick="chk('q9',this,false)">A) Add a new column in the source data with =T2/Q2 and refresh the Pivot</button>
+<button class="qo" onclick="chk('q9',this,true)">B) PivotTable Analyze → Fields, Items & Sets → Calculated Field → formula: =Profit/Sales</button>
+<button class="qo" onclick="chk('q9',this,false)">C) Right-click a value cell → Show Values As → Percentage</button>
+<button class="qo" onclick="chk('q9',this,false)">D) Pivot Tables cannot do division</button>
+<div class="qf" id="q9f"></div></div>
+
+<div class="qz" id="q10"><div class="qt">Q10. You want to prevent colleagues from accidentally editing your Dashboard formulas when you share the file. What is the correct approach?</div>
+<button class="qo" onclick="chk('q10',this,false)">A) Save as PDF instead of Excel</button>
+<button class="qo" onclick="chk('q10',this,false)">B) Delete the formulas and replace with values before sending</button>
+<button class="qo" onclick="chk('q10',this,true)">C) Review tab → Protect Sheet → set a password → choose what users can/cannot do → OK</button>
+<button class="qo" onclick="chk('q10',this,false)">D) Hide the sheet using right-click → Hide</button>
+<div class="qf" id="q10f"></div></div>
+
+<div class="cd hl" id="scoreBox" style="display:none;margin-top:20px;"><span class="tg am">Quiz Complete!</span>
+<p id="scoreText" style="font-size:16px;font-weight:700;margin-top:4px;"></p>
+<p id="scoreMsg" style="color:var(--muted);font-size:13px;margin-top:4px;"></p></div>
+
+<h2>Quick Reference Cheat Sheet</h2>
+<div class="g2">
+  <div class="cd"><span class="tg am">Pivot Table Actions</span>
+  <p style="font-size:12px;color:var(--muted);">Build: Insert → PivotTable<br>Group dates: Right-click → Group<br>Refresh: Right-click → Refresh<br>Value settings: Right-click value → Value Field Settings<br>Calculated field: Analyze → Fields, Items & Sets<br>Slicer: Analyze → Insert Slicer</p></div>
+  <div class="cd"><span class="tg bl">Charts</span>
+  <p style="font-size:12px;color:var(--muted);">Comparison: Column or Bar Chart<br>Trend over time: Line Chart<br>Part of whole: Pie Chart<br>Cumulative/stacked: Area Chart<br>Correlation between 2 vars: Scatter<br>Trendline: Right-click line → Add Trendline</p></div>
+  <div class="cd"><span class="tg tl">Multi-Sheet</span>
+  <p style="font-size:12px;color:var(--muted);">Reference: =Sheet2!A1<br>With spaces: ='Sales Data'!A1<br>3D formula: =SUM(Jan:Dec!B2)<br>Navigate: Ctrl+Page Down/Up<br>Group sheets: Ctrl+click tabs<br>Protect: Review → Protect Sheet</p></div>
+  <div class="cd"><span class="tg lm">Add-ons</span>
+  <p style="font-size:12px;color:var(--muted);">Slicers: Analyze → Insert Slicer<br>Sparklines: Insert → Sparklines<br>Power Query: Data → Get Data<br>Named Table: Ctrl+T<br>Structured ref: Table[Column]<br>Connect slicers: Right-click → Report Connections</p></div>
+</div>
+</div></div>
+
+</div><!-- pages-wrap -->
+<div class="prog" id="prog"></div>
+<div class="score-bar" id="scoreBar">0 / 10</div>
+<script>
+var SECTIONS=["Agenda","Pivot Tables","Data Analysis","Charts","Multi-Sheets","Linking","Add-ons","Workshop","Quiz"];
+var navTabs=document.getElementById("navTabs");
+var pages=document.querySelectorAll(".page");
+var cur=0;
+SECTIONS.forEach(function(n,i){
+  var t=document.createElement("div");
+  t.className="nav-tab"+(i===0?" active":"");
+  t.innerHTML="<span class='n'>"+String(i).padStart(2,"0")+"</span>"+n;
+  t.addEventListener("click",function(){go(i);});
+  navTabs.appendChild(t);
+});
+function go(i){pages[cur].classList.remove("active");document.querySelectorAll(".nav-tab")[cur].classList.remove("active");cur=i;pages[cur].classList.add("active");document.querySelectorAll(".nav-tab")[cur].classList.add("active");pages[cur].scrollTop=0;document.querySelectorAll(".nav-tab")[cur].scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});up();}
+function up(){var p=pages[cur];var pct=p.scrollHeight<=p.clientHeight?100:(p.scrollTop/(p.scrollHeight-p.clientHeight))*100;document.getElementById("prog").style.width=pct+"%";}
+pages.forEach(function(p){p.addEventListener("scroll",up);});
+document.addEventListener("keydown",function(e){if(e.key==="ArrowRight"&&cur<SECTIONS.length-1)go(cur+1);if(e.key==="ArrowLeft"&&cur>0)go(cur-1);});
+pages[0].classList.add("active");up();
+
+var correct=0,answered=0;
+var FB={
+  q1:{r:"Correct! Right-click any date value inside the Pivot → Group → tick Years (and Quarters or Months if needed) → OK. Excel collapses all individual dates into yearly or quarterly totals automatically. No changes to source data needed.",w:"The easiest way is to right-click a date inside the Pivot itself → Group → select Years. This works directly in the Pivot without touching source data."},
+  q2:{r:"Correct! Furniture has $293K in sales but only $5,322 in profit — that is a margin of under 2%. This signals heavy discounting or very high product costs. Office Supplies earns $45K on $283K sales (16% margin) which is far more profitable. Revenue alone does not tell the full story.",w:"High sales does not mean high profit. Furniture generates $293K in revenue but only $5,322 in profit — under 2% margin. Compare that to Office Supplies with 16% margin. Always analyze profit alongside sales."},
+  q3:{r:"Correct! The cross-sheet formula syntax is =SUM(SheetName!ColumnRange). Because Main_Order has no spaces in its name, no quotes are needed. If the sheet were named 'Main Order' (with a space) you would write =SUM('Main Order'!Q:Q).",w:"Cross-sheet formula syntax: =SUM(Main_Order!Q:Q) — sheet name, exclamation mark, then the range. Quotes are only needed when the sheet name contains spaces."},
+  q4:{r:"Correct! The nested IF checks from highest to lowest: first is Q2>500 (false for 250), then Q2>100 (true for 250) → returns Medium. Option C is wrong because it skips the High check entirely — any value over 500 would still get Medium.",w:"=IF(Q2>500,High,IF(Q2>100,Medium,Low)) is correct. For $250: 250>500 is false, then 250>100 is true → Medium. Always check conditions from highest to lowest in nested IF to avoid incorrect results."},
+  q5:{r:"Correct! Scatter plots are specifically designed to show the relationship between two numerical variables. Each dot represents one order with Sales on X and Profit on Y. You can instantly see clusters (normal orders), outliers (big sales, negative profit from discounts), and the overall correlation strength.",w:"Scatter plots are purpose-built for showing correlation between two numerical variables. Each of the 4,000 orders becomes one dot. You can spot the negative-profit outliers that come from heavy discounting — something no other chart type reveals as clearly."},
+  q6:{r:"Correct! =SUM(Jan:Dec!B5) is a 3D formula — it sums cell B5 from every sheet between Jan and Dec tabs. The sheets must be adjacent. This is far more efficient than listing =SUM(Jan!B5,Feb!B5,...Dec!B5) individually, and it automatically includes any sheet you insert between Jan and Dec.",w:"=SUM(Jan:Dec!B5) is a 3D formula that sums the same cell across multiple sheets. Much more efficient than listing each sheet individually. Works with AVERAGE, COUNT, MAX, MIN too."},
+  q7:{r:"Correct! Pivot Tables do not update automatically when source data changes. You must manually Refresh: right-click the Pivot → Refresh, or use PivotTable Analyze → Refresh. To auto-refresh on open: PivotTable Options → Data → tick Refresh data when opening the file.",w:"Pivot Tables need a manual Refresh after source data changes. Right-click anywhere in the Pivot → Refresh. Alternatively, go to PivotTable Analyze tab → Refresh. They do NOT auto-update — this is a common source of errors."},
+  q8:{r:"Correct! A Stacked Area Chart is ideal when you want to show both the total and the composition over time. Each category gets a filled band, and the bands stack to show the total. You can see at a glance how Technology's band grows over 2014-2017 while others stay flatter.",w:"Stacked Area Chart is the right choice here. It shows each category as a filled band stacked on top of others, so you see both composition (how much each contributes) and total (combined height) over time."},
+  q9:{r:"Correct! Calculated Fields are defined inside the Pivot without changing source data. Go to PivotTable Analyze → Fields, Items & Sets → Calculated Field → Name it Profit Margin → Formula = Profit/Sales → Add → OK. Format as percentage. It appears as a new column in the Pivot.",w:"Use Calculated Fields (PivotTable Analyze → Fields, Items & Sets → Calculated Field). Define =Profit/Sales. This creates a virtual column inside the Pivot computed from existing fields — no source data changes needed."},
+  q10:{r:"Correct! Sheet protection (Review → Protect Sheet) locks cells so others cannot edit them. You set what users CAN do (e.g., select cells, sort, filter) and block everything else. Set a password so only you can unprotect it. Hiding a sheet is easily reversed by anyone — it is not real protection.",w:"Review → Protect Sheet is the correct approach. You set a password and choose exactly what users can and cannot do. Hiding a sheet offers no real protection — anyone can unhide it. Protecting converts view-only access for the specified cells."}
+};
+function chk(id,el,ok){
+  var c=document.getElementById(id);
+  if(c.classList.contains("done"))return;
+  c.classList.add("done");answered++;
+  var f=document.getElementById(id+"f");
+  if(ok){el.classList.add("ok");f.className="qf show r";f.textContent="Correct! "+FB[id].r;correct++;}
+  else{el.classList.add("no");f.className="qf show w";f.textContent="Not quite. "+FB[id].w;}
+  var sb=document.getElementById("scoreBar");
+  sb.style.display="block";
+  sb.textContent=correct+" / "+answered+" correct";
+  if(answered===10){
+    var box=document.getElementById("scoreBox");
+    box.style.display="block";
+    var pct=Math.round((correct/10)*100);
+    document.getElementById("scoreText").textContent="You scored "+correct+" out of 10 ("+pct+"%)";
+    var msgs=["Keep going — revisit the modules and practice on the Superstore data.",
+              "Good effort! Focus on the Pivot and cross-sheet modules.",
+              "Solid understanding! Try the bonus add-on topics.",
+              "Excellent! You are ready for Power Query and advanced dashboarding."];
+    document.getElementById("scoreMsg").textContent=msgs[pct>=90?3:pct>=70?2:pct>=50?1:0];
+  }
+}
+</script>
+</body></html>
